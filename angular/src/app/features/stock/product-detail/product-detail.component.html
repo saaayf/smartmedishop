@@ -1,0 +1,203 @@
+<div class="product-detail-container">
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Chargement en cours...</p>
+  </div>
+
+  <div *ngIf="!loading && product" class="content">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <button mat-icon-button (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h1>{{ product.name }}</h1>
+      </div>
+      <div class="actions">
+        <button mat-raised-button 
+                color="primary" 
+                *ngIf="isAdmin()"
+                (click)="editProduct()">
+          <mat-icon>edit</mat-icon>
+          Modifier
+        </button>
+        <button mat-stroked-button color="accent" (click)="openPrediction()">
+          <mat-icon>insights</mat-icon>
+          Voir prédiction
+        </button>
+      </div>
+    </div>
+
+    <!-- Product Info Card -->
+    <mat-card class="product-info-card">
+      <mat-card-header>
+        <mat-card-title>Informations du produit</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">SKU:</span>
+            <span class="value"><strong>{{ product.sku }}</strong></span>
+          </div>
+          
+          <div class="info-item">
+            <span class="label">Nom:</span>
+            <span class="value">{{ product.name }}</span>
+          </div>
+          
+          <div class="info-item">
+            <span class="label">Description:</span>
+            <span class="value">{{ product.description }}</span>
+          </div>
+          
+          <div class="info-item">
+            <span class="label">Quantité en stock:</span>
+            <span class="value" [class.low-stock]="isLowStock()">
+              <strong>{{ product.quantity }}</strong>
+            </span>
+          </div>
+          
+          <div class="info-item">
+            <span class="label">Seuil d'alerte:</span>
+            <span class="value">{{ product.lowStockThreshold }}</span>
+          </div>
+          
+          <div class="info-item">
+            <span class="label">Prix:</span>
+            <span class="value"><strong>{{ product.price | currency:'EUR' }}</strong></span>
+          </div>
+          
+          <div class="info-item">
+            <span class="label">Date d'expiration:</span>
+            <span class="value" [class.expired]="isExpired()">
+              {{ product.expirationDate | date:'dd/MM/yyyy' }}
+            </span>
+          </div>
+          
+          <div class="info-item" *ngIf="product.createdAt">
+            <span class="label">Date de création:</span>
+            <span class="value">{{ product.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+        </div>
+
+        <!-- Status Badges -->
+        <div class="status-badges">
+          <mat-chip *ngIf="isLowStock()" color="warn">
+            <mat-icon>warning</mat-icon>
+            Stock bas
+          </mat-chip>
+          <mat-chip *ngIf="isExpired()" class="expired-chip">
+            <mat-icon>schedule</mat-icon>
+            Expiré
+          </mat-chip>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Info message for non-admin users -->
+    <mat-card class="info-message-card" *ngIf="!isAdmin()">
+      <mat-card-content>
+        <div class="info-content">
+          <mat-icon color="primary">info</mat-icon>
+          <div>
+            <p class="info-text">
+              <strong>Note:</strong> L'historique des mouvements et les alertes de stock sont réservés aux administrateurs.
+            </p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Tabs -->
+    <mat-tab-group class="detail-tabs" *ngIf="isAdmin()">
+      <!-- Movements Tab (Admin Only) -->
+      <mat-tab label="Historique des mouvements" *ngIf="isAdmin()">
+        <div class="tab-content">
+          <div *ngIf="loadingMovements" class="loading-container">
+            <mat-spinner diameter="40"></mat-spinner>
+          </div>
+
+          <div *ngIf="!loadingMovements && movements.length === 0" class="no-data">
+            <mat-icon>history</mat-icon>
+            <p>Aucun mouvement enregistré</p>
+          </div>
+
+          <table mat-table 
+                 [dataSource]="movements" 
+                 *ngIf="!loadingMovements && movements.length > 0"
+                 class="mat-elevation-z2">
+            
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef>Date</th>
+              <td mat-cell *matCellDef="let movement">
+                {{ movement.createdAt | date:'dd/MM/yyyy HH:mm' }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="type">
+              <th mat-header-cell *matHeaderCellDef>Type</th>
+              <td mat-cell *matCellDef="let movement">
+                <mat-chip [class]="getMovementTypeClass(movement.movementType)">
+                  <mat-icon>{{ movement.movementType === 'IN' ? 'add' : 'remove' }}</mat-icon>
+                  {{ getMovementTypeLabel(movement.movementType) }}
+                </mat-chip>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="quantity">
+              <th mat-header-cell *matHeaderCellDef>Quantité</th>
+              <td mat-cell *matCellDef="let movement">
+                <strong>{{ movement.quantity }}</strong>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="reason">
+              <th mat-header-cell *matHeaderCellDef>Raison</th>
+              <td mat-cell *matCellDef="let movement">
+                {{ getReasonLabel(movement.reason) }}
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="['date', 'type', 'quantity', 'reason']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['date', 'type', 'quantity', 'reason'];"></tr>
+          </table>
+        </div>
+      </mat-tab>
+
+      <!-- Alerts Tab (Admin Only) -->
+      <mat-tab label="Alertes" *ngIf="isAdmin()">
+        <div class="tab-content">
+          <div *ngIf="loadingAlerts" class="loading-container">
+            <mat-spinner diameter="40"></mat-spinner>
+          </div>
+
+          <div *ngIf="!loadingAlerts && alerts.length === 0" class="no-data">
+            <mat-icon>notifications_none</mat-icon>
+            <p>Aucune alerte pour ce produit</p>
+            <p class="hint">Les alertes sont créées automatiquement par le backend quand le stock est bas ou le produit expire.</p>
+          </div>
+
+          <div *ngIf="!loadingAlerts && alerts.length > 0" class="alerts-list">
+            <mat-card *ngFor="let alert of alerts" class="alert-card">
+              <mat-card-content>
+                <div class="alert-header">
+                  <mat-chip [class]="getAlertTypeClass(alert.status)">
+                    <mat-icon>{{ alert.status === 'ACTIVE' ? 'error' : 'check_circle' }}</mat-icon>
+                    {{ getAlertTypeLabel(alert.status) }}
+                  </mat-chip>
+                  <span class="alert-date">
+                    {{ alert.createdAt | date:'dd/MM/yyyy HH:mm' }}
+                  </span>
+                </div>
+                <div class="alert-body">
+                  <p class="alert-type">{{ alert.alertType }}</p>
+                  <p class="alert-message">{{ alert.message }}</p>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

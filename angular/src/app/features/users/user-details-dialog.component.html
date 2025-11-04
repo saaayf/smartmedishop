@@ -1,0 +1,137 @@
+<div class="user-details-dialog">
+  <h2 mat-dialog-title>
+    User Details
+  </h2>
+  
+  <mat-dialog-content>
+    <div class="details-container">
+      <!-- Basic Information -->
+      <mat-card class="detail-section">
+        <mat-card-header>
+          <mat-card-title>Basic Information</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="detail-row">
+            <span class="label">User ID:</span>
+            <span class="value">{{ user?.id || 'N/A' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Username:</span>
+            <span class="value">{{ user?.username || 'N/A' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Email:</span>
+            <span class="value">{{ user?.email || 'N/A' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">First Name:</span>
+            <span class="value">{{ user?.firstName || 'N/A' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Last Name:</span>
+            <span class="value">{{ user?.lastName || 'N/A' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Phone:</span>
+            <span class="value">{{ user?.phone || 'N/A' }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Account Information -->
+      <mat-card class="detail-section">
+        <mat-card-header>
+          <mat-card-title>Account Information</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="detail-row">
+            <span class="label">Role:</span>
+            <span class="value">{{ user?.userType || 'N/A' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Status:</span>
+            <span class="value">
+              <mat-icon [color]="user?.isActive ? 'primary' : 'warn'">
+                {{ user?.isActive ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+              <span [class]="user?.isActive ? 'status-active' : 'status-inactive'">
+                {{ user?.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Verified:</span>
+            <span class="value">
+              <mat-icon [color]="user?.isVerified ? 'primary' : 'warn'">
+                {{ user?.isVerified ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+              <span [class]="user?.isVerified ? 'status-active' : 'status-inactive'">
+                {{ user?.isVerified ? 'Yes' : 'No' }}
+              </span>
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Registration Date:</span>
+            <span class="value">{{ formatDate(user?.registrationDate) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Last Login:</span>
+            <span class="value">{{ formatDate(user?.lastLogin) }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Personal Information -->
+      <mat-card class="detail-section" *ngIf="user?.birthDate">
+        <mat-card-header>
+          <mat-card-title>Personal Information</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="detail-row">
+            <span class="label">Date of Birth:</span>
+            <span class="value">{{ formatDate(user?.birthDate) }}</span>
+          </div>
+          <div class="detail-row" *ngIf="calculateAge(user?.birthDate) !== null">
+            <span class="label">Age:</span>
+            <span class="value">{{ calculateAge(user?.birthDate) }} years</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Risk & Fraud Information -->
+      <mat-card class="detail-section">
+        <mat-card-header>
+          <mat-card-title>Risk & Fraud Information</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="detail-row">
+            <span class="label">Risk Profile:</span>
+            <span class="value risk-profile" [style.color]="getRiskProfileColor(user?.riskProfile)">
+              {{ user?.riskProfile || 'N/A' }}
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Fraud Count:</span>
+            <span class="value">{{ user?.fraudCount || 0 }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Total Transactions:</span>
+            <span class="value">{{ user?.totalTransactions || 0 }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Average Amount:</span>
+            <span class="value">${{ user?.averageAmount || 0 | number:'1.2-2' }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="close()">
+      <mat-icon>close</mat-icon>
+      Close
+    </button>
+  </mat-dialog-actions>
+</div>
+

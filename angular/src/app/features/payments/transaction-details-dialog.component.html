@@ -1,0 +1,306 @@
+<div class="transaction-details-dialog">
+  <h2 mat-dialog-title>
+    <mat-icon>receipt</mat-icon>
+    Transaction Details
+  </h2>
+  
+  <mat-dialog-content>
+    <div class="details-container">
+      <!-- Basic Information -->
+      <mat-card class="detail-section">
+        <mat-card-header>
+          <mat-card-title>Basic Information</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="detail-row">
+            <span class="label">Transaction ID:</span>
+            <span class="value">{{ transaction?.id || 'N/A' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Amount:</span>
+            <span class="value amount">${{ transaction?.amount || 0 | number:'1.2-2' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Status:</span>
+            <span class="value status" [class]="'status-' + (transaction?.status?.toLowerCase() || '')">
+              {{ transaction?.status || 'N/A' }}
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Date:</span>
+            <span class="value">{{ formatDate(transaction?.transactionDate || transaction?.date) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Merchant:</span>
+            <span class="value">{{ transaction?.merchantName || 'N/A' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Transaction Type:</span>
+            <span class="value">{{ transaction?.transactionType || 'N/A' }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Payment Information -->
+      <mat-card class="detail-section">
+        <mat-card-header>
+          <mat-card-title>Payment Information</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="detail-row">
+            <span class="label">Payment Method:</span>
+            <span class="value">{{ transaction?.paymentMethod || 'N/A' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Device Type:</span>
+            <span class="value">{{ transaction?.deviceType || 'N/A' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Location Country:</span>
+            <span class="value">{{ transaction?.locationCountry || 'N/A' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">IP Address:</span>
+            <span class="value">{{ transaction?.ipAddress || 'N/A' }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- User Information -->
+      <mat-card class="detail-section" *ngIf="transaction?.userId || transaction?.username">
+        <mat-card-header>
+          <mat-card-title>User Information</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="detail-row" *ngIf="transaction?.userId">
+            <span class="label">User ID:</span>
+            <span class="value">{{ transaction.userId }}</span>
+          </div>
+          <div class="detail-row" *ngIf="transaction?.username">
+            <span class="label">Username:</span>
+            <span class="value">{{ transaction.username }}</span>
+          </div>
+          <div class="detail-row" *ngIf="transaction?.email">
+            <span class="label">Email:</span>
+            <span class="value">{{ transaction.email }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Fraud Detection Information -->
+      <mat-card class="detail-section">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>security</mat-icon>
+            Fraud Detection Summary
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="detail-row">
+            <span class="label">Fraud Score:</span>
+            <span class="value" [style.color]="getFraudScoreColor(transaction?.fraudScore)">
+              {{ transaction?.fraudScore || 0 | number:'1.2-2' }}
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Risk Level:</span>
+            <span class="value risk-level" [style.color]="getRiskLevelColor(transaction?.riskLevel)">
+              {{ transaction?.riskLevel || 'N/A' }}
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Is Fraud:</span>
+            <span class="value">
+              <mat-icon [color]="transaction?.isFraud ? 'warn' : 'primary'">
+                {{ transaction?.isFraud ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+              <span [class]="transaction?.isFraud ? 'fraud-yes' : 'fraud-no'">
+                {{ transaction?.isFraud ? 'Yes' : 'No' }}
+              </span>
+            </span>
+          </div>
+          <div class="detail-row" *ngIf="transaction?.fraudReasons">
+            <span class="label">Fraud Reasons:</span>
+            <div class="value fraud-reasons">
+              <span *ngFor="let reason of getFraudReasonsList()" class="fraud-reason-chip">
+                {{ reason }}
+              </span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- ML Models Analysis (Only for Fraud Analysts) -->
+      <mat-card class="detail-section" *ngIf="transaction?.mlExplanation && isFraudAnalystOrAdmin">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>psychology</mat-icon>
+            Machine Learning Analysis
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="explanation-section">
+            <!-- Isolation Forest -->
+            <div class="ml-model-result" *ngIf="transaction.mlExplanation.isolation_forest">
+              <div class="model-header">
+                <mat-icon>forest</mat-icon>
+                <span class="model-name">Isolation Forest (Anomaly Detection)</span>
+              </div>
+              <div class="model-details">
+                <div class="detail-item">
+                  <span class="label">Prediction:</span>
+                  <span class="value" [class]="getPredictionClass(transaction.mlExplanation.isolation_forest.prediction)">
+                    {{ transaction.mlExplanation.isolation_forest.prediction }}
+                  </span>
+                </div>
+                <div class="detail-item" *ngIf="transaction.mlExplanation.isolation_forest.normalized_score !== undefined">
+                  <span class="label">Anomaly Score:</span>
+                  <span class="value">{{ transaction.mlExplanation.isolation_forest.normalized_score | number:'1.2-2' }}</span>
+                </div>
+                <div class="interpretation" *ngIf="transaction.mlExplanation.isolation_forest.interpretation">
+                  <p>{{ transaction.mlExplanation.isolation_forest.interpretation }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Random Forest -->
+            <div class="ml-model-result" *ngIf="transaction.mlExplanation.random_forest">
+              <div class="model-header">
+                <mat-icon>account_tree</mat-icon>
+                <span class="model-name">Random Forest (Classification)</span>
+              </div>
+              <div class="model-details">
+                <div class="detail-item">
+                  <span class="label">Prediction:</span>
+                  <span class="value" [class]="getPredictionClass(transaction.mlExplanation.random_forest.prediction)">
+                    {{ transaction.mlExplanation.random_forest.prediction }}
+                  </span>
+                </div>
+                <div class="detail-item" *ngIf="transaction.mlExplanation.random_forest.probability !== undefined">
+                  <span class="label">Fraud Probability:</span>
+                  <span class="value">{{ transaction.mlExplanation.random_forest.probability | percent:'1.1-1' }}</span>
+                </div>
+                <div class="interpretation" *ngIf="transaction.mlExplanation.random_forest.interpretation">
+                  <p>{{ transaction.mlExplanation.random_forest.interpretation }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Combined ML Score -->
+            <div class="ml-summary" *ngIf="transaction.mlExplanation.combined_score !== undefined">
+              <div class="summary-row">
+                <span class="label">Combined ML Score:</span>
+                <span class="value score-value" [style.color]="getFraudScoreColor(transaction.mlExplanation.combined_score)">
+                  {{ transaction.mlExplanation.combined_score | number:'1.2-2' }}
+                </span>
+              </div>
+              <div class="summary-row">
+                <span class="label">Weight in Final Decision:</span>
+                <span class="value">{{ (transaction.mlExplanation.weight * 100) | number:'0.0-0' }}%</span>
+              </div>
+              <div class="summary-row">
+                <span class="label">Contribution:</span>
+                <span class="value">{{ transaction.mlExplanation.contribution | number:'1.2-2' }}</span>
+              </div>
+              <div class="interpretation" *ngIf="transaction.mlExplanation.interpretation">
+                <p><strong>Overall ML Assessment:</strong> {{ transaction.mlExplanation.interpretation }}</p>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Rule-Based Analysis (Only for Fraud Analysts) -->
+      <mat-card class="detail-section" *ngIf="transaction?.ruleExplanation && isFraudAnalystOrAdmin">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>gavel</mat-icon>
+            Rule-Based Analysis
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="explanation-section">
+            <div class="rule-summary">
+              <div class="summary-row">
+                <span class="label">Rule-Based Score:</span>
+                <span class="value score-value" [style.color]="getFraudScoreColor(transaction.ruleExplanation.score)">
+                  {{ transaction.ruleExplanation.score | number:'1.2-2' }}
+                </span>
+              </div>
+              <div class="summary-row">
+                <span class="label">Weight in Final Decision:</span>
+                <span class="value">{{ (transaction.ruleExplanation.weight * 100) | number:'0.0-0' }}%</span>
+              </div>
+              <div class="summary-row">
+                <span class="label">Contribution:</span>
+                <span class="value">{{ transaction.ruleExplanation.contribution | number:'1.2-2' }}</span>
+              </div>
+              <div class="summary-row" *ngIf="transaction.ruleExplanation.reason_count !== undefined">
+                <span class="label">Risk Factors Triggered:</span>
+                <span class="value">{{ transaction.ruleExplanation.reason_count }}</span>
+              </div>
+              <div class="interpretation" *ngIf="transaction.ruleExplanation.interpretation">
+                <p><strong>Rule-Based Assessment:</strong> {{ transaction.ruleExplanation.interpretation }}</p>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Conclusion (Only for Fraud Analysts) -->
+      <mat-card class="detail-section conclusion-section" *ngIf="transaction?.conclusion && isFraudAnalystOrAdmin">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>summarize</mat-icon>
+            Final Conclusion
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="conclusion-content">
+            <div class="conclusion-summary">
+              <div class="summary-row">
+                <span class="label">Final Score:</span>
+                <span class="value score-value" [style.color]="getFraudScoreColor(transaction.conclusion.final_score)">
+                  {{ transaction.conclusion.final_score | number:'1.2-2' }}
+                </span>
+              </div>
+              <div class="summary-row">
+                <span class="label">Risk Level:</span>
+                <span class="value risk-level" [style.color]="getRiskLevelColor(transaction.conclusion.final_risk_level)">
+                  {{ transaction.conclusion.final_risk_level }}
+                </span>
+              </div>
+              <div class="summary-row">
+                <span class="label">Decision:</span>
+                <span class="value" [class]="transaction.conclusion.is_fraud ? 'fraud-decision' : 'legitimate-decision'">
+                  <mat-icon [color]="transaction.conclusion.is_fraud ? 'warn' : 'primary'">
+                    {{ transaction.conclusion.is_fraud ? 'warning' : 'check_circle' }}
+                  </mat-icon>
+                  {{ transaction.conclusion.is_fraud ? 'Flagged as Fraud' : 'Legitimate Transaction' }}
+                </span>
+              </div>
+              <div class="summary-row" *ngIf="transaction.conclusion.method">
+                <span class="label">Detection Method:</span>
+                <span class="value">{{ transaction.conclusion.method }}</span>
+              </div>
+            </div>
+            <div class="conclusion-explanation" *ngIf="transaction.conclusion.explanation">
+              <div class="explanation-box">
+                <mat-icon>info</mat-icon>
+                <p>{{ transaction.conclusion.explanation }}</p>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="close()">
+      <mat-icon>close</mat-icon>
+      Close
+    </button>
+  </mat-dialog-actions>
+</div>
+

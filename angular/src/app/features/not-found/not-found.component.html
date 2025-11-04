@@ -1,0 +1,36 @@
+<div class="not-found-container">
+  <div class="not-found-content">
+    <div class="error-code">
+      <h1>404</h1>
+    </div>
+    
+    <div class="error-message">
+      <h2>Page Not Found</h2>
+      <p>Sorry, the page you are looking for doesn't exist or has been moved.</p>
+    </div>
+    
+    <div class="error-illustration">
+      <mat-icon class="error-icon">local_hospital</mat-icon>
+      <div class="medical-symbols">
+        <mat-icon class="symbol">favorite</mat-icon>
+        <mat-icon class="symbol">favorite</mat-icon>
+        <mat-icon class="symbol">favorite</mat-icon>
+      </div>
+    </div>
+    
+    <div class="action-buttons">
+      <button mat-raised-button color="primary" (click)="goHome()">
+        <mat-icon>home</mat-icon>
+        Go to Dashboard
+      </button>
+      <button mat-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Go Back
+      </button>
+    </div>
+    
+    <div class="help-text">
+      <p>If you believe this is an error, please contact our support team.</p>
+    </div>
+  </div>
+</div>

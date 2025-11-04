@@ -1,0 +1,96 @@
+<div class="cart-container">
+  <h1>Panier d'achats</h1>
+  
+  <div class="cart-content" *ngIf="cartItems.length > 0">
+    <div class="cart-items">
+      <mat-card *ngFor="let item of cartItems" class="cart-item">
+        <mat-card-content>
+          <div class="item-info">
+            <h3>{{ item.product.name }}</h3>
+            <p class="sku">SKU: {{ item.product.sku }}</p>
+            <p class="description">{{ item.product.description }}</p>
+            <p class="price">{{ item.product.price | currency:'EUR' }}</p>
+            <p class="stock-info">
+              <mat-icon class="stock-icon">inventory_2</mat-icon>
+              Stock disponible: {{ item.product.quantity }}
+            </p>
+          </div>
+          
+          <div class="quantity-controls">
+            <button mat-icon-button (click)="updateQuantity(item, item.quantity - 1)" [disabled]="processing">
+              <mat-icon>remove</mat-icon>
+            </button>
+            <span class="quantity">{{ item.quantity }}</span>
+            <button mat-icon-button 
+                    (click)="updateQuantity(item, item.quantity + 1)" 
+                    [disabled]="processing || item.quantity >= item.product.quantity">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+          
+          <div class="item-total">
+            <strong>{{ (item.product.price * item.quantity) | currency:'EUR' }}</strong>
+          </div>
+          
+          <button mat-icon-button color="warn" (click)="removeItem(item)" [disabled]="processing">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    
+    <div class="cart-summary">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Résumé de la commande</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="summary-row">
+            <span>Sous-total:</span>
+            <span>{{ totalAmount | currency:'EUR' }}</span>
+          </div>
+          <div class="summary-row">
+            <span>TVA (19%):</span>
+            <span>{{ (totalAmount * 0.19) | currency:'EUR' }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="summary-row total">
+            <span>Total:</span>
+            <span>{{ (totalAmount * 1.19) | currency:'EUR' }}</span>
+          </div>
+          
+          <div class="cart-info">
+            <mat-icon color="primary">info</mat-icon>
+            <p>Le stock sera automatiquement mis à jour après l'achat</p>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button (click)="clearCart()" [disabled]="processing">
+            <mat-icon>delete_sweep</mat-icon>
+            Vider le panier
+          </button>
+          <button mat-raised-button 
+                  color="primary" 
+                  (click)="proceedToCheckout()"
+                  [disabled]="processing">
+            <mat-spinner *ngIf="processing" diameter="20"></mat-spinner>
+            <span *ngIf="!processing">
+              <mat-icon>shopping_cart_checkout</mat-icon>
+              Passer la commande
+            </span>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+  
+  <div class="empty-cart" *ngIf="cartItems.length === 0">
+    <mat-icon>shopping_cart</mat-icon>
+    <h2>Votre panier est vide</h2>
+    <p>Ajoutez des produits pour commencer vos achats</p>
+    <button mat-raised-button color="primary" routerLink="/stock/products">
+      <mat-icon>inventory_2</mat-icon>
+      Voir les produits
+    </button>
+  </div>
+</div>

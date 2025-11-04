@@ -1,0 +1,141 @@
+# ==========================================
+# Root .gitignore for SmartMediShop Project
+# ==========================================
+
+# ========== Angular Frontend ==========
+angular/node_modules/
+angular/dist/
+angular/.angular/
+angular/tmp/
+angular/out-tsc/
+angular/.cache/
+angular/.parcel-cache/
+angular/.sass-cache/
+angular/coverage/
+angular/*.log
+angular/npm-debug.log*
+angular/yarn-debug.log*
+angular/yarn-error.log*
+angular/.vscode/*
+!angular/.vscode/settings.json
+!angular/.vscode/tasks.json
+!angular/.vscode/launch.json
+!angular/.vscode/extensions.json
+
+# ========== Java / Maven Backend ==========
+backend/target/
+backend/.classpath
+backend/.project
+backend/.settings/
+backend/.idea/
+backend/*.iml
+backend/*.ipr
+backend/*.iws
+backend/.springBeans
+backend/.sts4-cache/
+
+# ========== Python / ML Models ==========
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# ========== IDEs ==========
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# ========== OS Files ==========
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ========== Environment Variables ==========
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+
+# ========== Logs ==========
+*.log
+logs/
+*.log.*
+
+# ========== Database Files ==========
+*.db
+*.sqlite
+*.sqlite3
+
+# ========== Temporary Files ==========
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+
+# ========== Build Artifacts ==========
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# ========== Excel Export Files (Optional - uncomment if you don't want to track exports) ==========
+# *.xlsx
+
+# ========== Large Data Files ==========
+*.csv
+# Uncomment if you don't want to track large data files
+# smart_medishop_data_export_*.xlsx
+
+# ========== Model Files (Keep in repo for now, but can exclude if too large) ==========
+# Uncomment if models are too large for GitHub (>100MB)
+# models/*.pkl
+# smart_medishop_export/*.pkl
+

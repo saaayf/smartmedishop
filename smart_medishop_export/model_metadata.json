@@ -1,0 +1,68 @@
+{
+  "model_name": "SmartMediShop Fraud Detection",
+  "version": "1.0.0",
+  "created_at": "2025-10-22T20:40:41.644781",
+  "description": "AI-powered fraud detection system for SmartMediShop payment management",
+  "models": {
+    "isolation_forest": {
+      "type": "Unsupervised Anomaly Detection",
+      "contamination": 0.2,
+      "n_estimators": 100
+    },
+    "random_forest": {
+      "type": "Supervised Classification",
+      "n_estimators": 100,
+      "class_weight": "balanced"
+    }
+  },
+  "performance": {
+    "isolation_forest": {
+      "auc": 0.03657499999999999,
+      "type": "Unsupervised Anomaly Detection"
+    },
+    "random_forest": {
+      "auc": 1.0,
+      "type": "Supervised Classification"
+    }
+  },
+  "feature_importance": [
+    0.008468206788981011,
+    0.0055631212901237305,
+    0.0,
+    0.0,
+    0.1460872285576273,
+    0.11579005733275687,
+    0.000112711574761906,
+    0.041382555032280506,
+    0.0,
+    0.13611477236063876,
+    0.030128427610998466,
+    0.0,
+    0.0016258998061166351,
+    4.53571710843972e-05,
+    0.012172151995194471,
+    0.01186463873801638,
+    0.00031151415001971056,
+    0.0,
+    0.11263841250327389,
+    0.16544062247662977,
+    0.1080569788528445,
+    0.0,
+    0.0006693183223176983,
+    9.387261558360267e-06,
+    0.013641563370524272,
+    0.0035012258187689105,
+    0.0725639021068076,
+    0.0,
+    8.685372720700042e-05,
+    0.010135114971358517,
+    0.0,
+    6.177232996303214e-06,
+    0.0035838009471130493
+  ],
+  "training_data_info": {
+    "total_samples": 2500,
+    "fraud_rate": 0.2,
+    "features_count": 33
+  }
+}

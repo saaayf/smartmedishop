@@ -1,0 +1,136 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <mat-icon class="logo-icon">local_hospital</mat-icon>
+      <h1>SmartMediShop</h1>
+      <p>Create your account</p>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>First Name</mat-label>
+          <input matInput formControlName="firstName" placeholder="Enter your first name">
+          <mat-error *ngIf="registerForm.get('firstName')?.hasError('required')">
+            First name is required
+          </mat-error>
+          <mat-error *ngIf="registerForm.get('firstName')?.hasError('minlength')">
+            First name must be at least 2 characters
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Last Name</mat-label>
+          <input matInput formControlName="lastName" placeholder="Enter your last name">
+          <mat-error *ngIf="registerForm.get('lastName')?.hasError('required')">
+            Last name is required
+          </mat-error>
+          <mat-error *ngIf="registerForm.get('lastName')?.hasError('minlength')">
+            Last name must be at least 2 characters
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" placeholder="Enter your email">
+        <mat-icon matSuffix>email</mat-icon>
+        <mat-error *ngIf="registerForm.get('email')?.hasError('required')">
+          Email is required
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('email')?.hasError('email')">
+          Please enter a valid email
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Username</mat-label>
+        <input matInput formControlName="username" placeholder="Choose a username">
+        <mat-icon matSuffix>person</mat-icon>
+        <mat-error *ngIf="registerForm.get('username')?.hasError('required')">
+          Username is required
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('username')?.hasError('minlength')">
+          Username must be at least 3 characters
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input matInput [type]="hidePassword ? 'password' : 'text'" 
+               formControlName="password" placeholder="Create a password">
+        <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+          <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-error *ngIf="registerForm.get('password')?.hasError('required')">
+          Password is required
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('password')?.hasError('minlength')">
+          Password must be at least 6 characters
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Confirm Password</mat-label>
+        <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" 
+               formControlName="confirmPassword" placeholder="Confirm your password">
+        <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" type="button">
+          <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-error *ngIf="registerForm.get('confirmPassword')?.hasError('required')">
+          Please confirm your password
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('confirmPassword')?.hasError('passwordMismatch')">
+          Passwords do not match
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Date of Birth</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="birthDate" 
+               [max]="maxDate" [min]="minDate"
+               placeholder="Select your date of birth">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-hint>Enter your date of birth</mat-hint>
+        <mat-error *ngIf="registerForm.get('birthDate')?.hasError('required')">
+          Date of birth is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Role</mat-label>
+        <mat-select formControlName="role">
+          <mat-option value="user">Customer</mat-option>
+          <mat-option value="nurse">Nurse</mat-option>
+          <mat-option value="supplier">Supplier</mat-option>
+          <mat-option value="delivery_man">Delivery Man</mat-option>
+          <mat-option value="technical_support">Technical Support</mat-option>
+          <mat-option value="fraud_analyst">Fraud Analyst</mat-option>
+          <mat-option value="admin">Admin</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="terms-checkbox">
+        <mat-checkbox formControlName="acceptTerms">
+          I accept the <a href="#" class="terms-link">Terms and Conditions</a>
+        </mat-checkbox>
+        <mat-error *ngIf="registerForm.get('acceptTerms')?.hasError('required')">
+          You must accept the terms and conditions
+        </mat-error>
+      </div>
+
+      <button mat-raised-button color="primary" type="submit" 
+              [disabled]="registerForm.invalid || loading" class="full-width auth-button">
+        <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+        <span *ngIf="!loading">Create Account</span>
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Already have an account? 
+        <a (click)="goToLogin()" class="login-link">Sign in here</a>
+      </p>
+    </div>
+  </div>
+</div>

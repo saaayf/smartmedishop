@@ -1,0 +1,239 @@
+/**
+ * Interface pour l'intégration du panier avec le système de stock
+ * 
+ * Si vous voulez intégrer le système de panier avec la gestion de stock,
+ * ajoutez cette interface dans vos modèles et utilisez-la dans vos services.
+ */
+
+// 1. Créer l'interface CartItem
+export interface CartItem {
+  product: Product;
+  quantity: number;
+}
+
+// 2. Créer l'interface pour les items de transaction
+export interface TransactionItem {
+  sku: string;
+  quantity: number;
+  price: number;
+  productName?: string;
+}
+
+// 3. Étendre l'interface Transaction existante dans api.service.ts
+export interface Transaction {
+  id?: number;
+  userId?: number;
+  amount: number;
+  paymentMethod: string;
+  deviceType?: string;
+  ipAddress?: string;
+  locationCountry?: string;
+  merchantName?: string;
+  transactionType?: string;
+  status?: string;
+  fraudScore?: number;
+  riskLevel?: string;
+  isFraud?: boolean;
+  fraudReasons?: string;
+  transactionDate?: string;
+  createdAt?: string;
+  items?: TransactionItem[];  // ⚠️ AJOUTER CETTE LIGNE
+}
+
+/**
+ * Exemple d'utilisation dans un CartService
+ * 
+ * Créer ce fichier: src/app/core/services/cart.service.ts
+ */
+/*
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Product } from '../../models/product.model';
+import { CartItem, TransactionItem } from '../../models/cart.model';
+import { ApiService, Transaction } from './api.service';
+import { AuthService } from './auth.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class CartService {
+  private cartItems = new BehaviorSubject<CartItem[]>([]);
+  public cartItems$ = this.cartItems.asObservable();
+
+  constructor(
+    private apiService: ApiService,
+    private authService: AuthService
+  ) {
+    // Charger le panier depuis le localStorage au démarrage
+    const savedCart = localStorage.getItem('cart');
+    if (savedCart) {
+      this.cartItems.next(JSON.parse(savedCart));
+    }
+  }
+
+  addItem(item: CartItem): void {
+    const currentItems = this.cartItems.value;
+    const existingItem = currentItems.find(i => i.product.id === item.product.id);
+    
+    if (existingItem) {
+      existingItem.quantity += item.quantity;
+    } else {
+      currentItems.push(item);
+    }
+    
+    this.cartItems.next(currentItems);
+    this.saveCart();
+  }
+
+  removeItem(productId: number): void {
+    const currentItems = this.cartItems.value.filter(i => i.product.id !== productId);
+    this.cartItems.next(currentItems);
+    this.saveCart();
+  }
+
+  updateQuantity(productId: number, quantity: number): void {
+    const currentItems = this.cartItems.value;
+    const item = currentItems.find(i => i.product.id === productId);
+    
+    if (item) {
+      item.quantity = quantity;
+      this.cartItems.next(currentItems);
+      this.saveCart();
+    }
+  }
+
+  clearCart(): void {
+    this.cartItems.next([]);
+    localStorage.removeItem('cart');
+  }
+
+  getTotal(): number {
+    return this.cartItems.value.reduce((total, item) => {
+      return total + (item.product.price * item.quantity);
+    }, 0);
+  }
+
+  private saveCart(): void {
+    localStorage.setItem('cart', JSON.stringify(this.cartItems.value));
+  }
+
+  // Créer une transaction à partir des items du panier
+  createTransactionFromCart(paymentMethod: string): Observable<any> {
+    const items = this.cartItems.value;
+    
+    if (items.length === 0) {
+      throw new Error('Le panier est vide');
+    }
+
+    const transactionData: Transaction = {
+      userId: this.authService.getCurrentUser()?.id,
+      amount: this.getTotal(),
+      paymentMethod: paymentMethod,
+      transactionType: 'PURCHASE',
+      items: items.map(item => ({
+        sku: item.product.sku,
+        quantity: item.quantity,
+        price: item.product.price,
+        productName: item.product.name
+      }))
+    };
+
+    return this.apiService.createTransaction(transactionData);
+  }
+}
+*/
+
+/**
+ * Exemple d'utilisation dans le composant de panier
+ * 
+ * Modifier: src/app/features/cart/cart.component.ts
+ */
+/*
+import { Component, OnInit } from '@angular/core';
+import { CartService } from '../../core/services/cart.service';
+import { NotificationService } from '../../core/services/notification.service';
+import { Router } from '@angular/router';
+import { CartItem } from '../../models/cart.model';
+
+@Component({
+  selector: 'app-cart',
+  templateUrl: './cart.component.html',
+  styleUrls: ['./cart.component.scss']
+})
+export class CartComponent implements OnInit {
+  cartItems: CartItem[] = [];
+  loading: boolean = false;
+
+  constructor(
+    private cartService: CartService,
+    private notificationService: NotificationService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.cartService.cartItems$.subscribe(items => {
+      this.cartItems = items;
+    });
+  }
+
+  getTotal(): number {
+    return this.cartService.getTotal();
+  }
+
+  removeItem(productId: number): void {
+    this.cartService.removeItem(productId);
+    this.notificationService.showSuccess('Produit retiré du panier');
+  }
+
+  updateQuantity(productId: number, quantity: number): void {
+    if (quantity <= 0) {
+      this.removeItem(productId);
+      return;
+    }
+    this.cartService.updateQuantity(productId, quantity);
+  }
+
+  checkout(paymentMethod: string): void {
+    this.loading = true;
+    
+    this.cartService.createTransactionFromCart(paymentMethod).subscribe({
+      next: (response) => {
+        this.notificationService.showSuccess('Commande passée avec succès');
+        this.cartService.clearCart();
+        this.router.navigate(['/payments']);
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error creating transaction:', error);
+        this.notificationService.showError('Erreur lors de la création de la commande');
+        this.loading = false;
+      }
+    });
+  }
+}
+*/
+
+/**
+ * Note importante sur la décrémentation du stock:
+ * 
+ * Le backend Spring Boot décrémente automatiquement le stock quand une transaction
+ * est créée avec des items contenant le SKU. Vous n'avez pas besoin de le faire
+ * manuellement dans le frontend.
+ * 
+ * Assurez-vous que votre backend accepte une structure de transaction comme:
+ * 
+ * {
+ *   "userId": 1,
+ *   "amount": 29.99,
+ *   "paymentMethod": "CREDIT_CARD",
+ *   "transactionType": "PURCHASE",
+ *   "items": [
+ *     {
+ *       "sku": "PARACETAMOL001",
+ *       "quantity": 2,
+ *       "price": 5.99,
+ *       "productName": "Paracétamol 500mg"
+ *     }
+ *   ]
+ * }
+ */

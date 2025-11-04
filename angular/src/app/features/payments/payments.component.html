@@ -1,0 +1,509 @@
+<div class="payments-container">
+  <div class="page-header">
+    <h1>Transaction Management with AI Fraud Detection</h1>
+    <div class="header-actions">
+      <button mat-raised-button color="primary" (click)="toggleCreateForm()" *ngIf="!isFraudAnalystOrAdmin">
+        <mat-icon>add</mat-icon>
+        Create Transaction
+      </button>
+      <button mat-stroked-button (click)="activeTab === 0 ? loadAllTransactions() : (activeTab === 1 ? loadTransactionsByUser() : (activeTab === 2 ? loadAllStatistics() : (activeTab === 3 ? loadAllUserBehaviors() : loadFraudAlerts())))">
+        <mat-icon>refresh</mat-icon>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabs for FRAUD_ANALYST/ADMIN -->
+  <!-- Debug: isFraudAnalystOrAdmin = {{ isFraudAnalystOrAdmin }} -->
+  <mat-tab-group *ngIf="isFraudAnalystOrAdmin" [(selectedIndex)]="activeTab" (selectedIndexChange)="onTabChange($event)">
+    
+    <!-- Tab 0: All Transactions -->
+    <mat-tab label="All Transactions">
+      <ng-template matTabContent>
+        <mat-card class="filters-card">
+          <mat-card-content>
+            <h3>Filters</h3>
+            <div class="filters-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Risk Level</mat-label>
+                <mat-select [(ngModel)]="filterRiskLevel">
+                  <mat-option value="">All</mat-option>
+                  <mat-option value="LOW">Low</mat-option>
+                  <mat-option value="MEDIUM">Medium</mat-option>
+                  <mat-option value="HIGH">High</mat-option>
+                  <mat-option value="CRITICAL">Critical</mat-option>
+                </mat-select>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline">
+                <mat-label>Fraud Status</mat-label>
+                <mat-select [(ngModel)]="filterIsFraud">
+                  <mat-option [value]="null">All</mat-option>
+                  <mat-option [value]="true">Fraud</mat-option>
+                  <mat-option [value]="false">Safe</mat-option>
+                </mat-select>
+              </mat-form-field>
+              
+              <button mat-raised-button color="primary" (click)="applyFilters()">
+                <mat-icon>filter_list</mat-icon>
+                Apply Filters
+              </button>
+              <button mat-stroked-button (click)="clearFilters()">
+                <mat-icon>clear</mat-icon>
+                Clear
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="transactions-card">
+          <mat-card-header>
+            <mat-card-title>All Transactions</mat-card-title>
+            <mat-card-subtitle>View all transactions across all users ({{ allTransactionsTotalItems }} total)</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <app-data-table
+              [columns]="allTransactionsColumns"
+              [data]="allTransactions"
+              [loading]="loading"
+              [pageSize]="allTransactionsPageSize"
+              [totalItems]="allTransactionsTotalItems"
+              [totalPages]="allTransactionsTotalPages"
+              [currentPage]="allTransactionsPage"
+              [serverSidePagination]="true"
+              (pageChange)="onAllTransactionsPageChange($event)"
+              (view)="onView($event)">
+            </app-data-table>
+          </mat-card-content>
+        </mat-card>
+      </ng-template>
+    </mat-tab>
+
+    <!-- Tab 1: Transactions by User -->
+    <mat-tab label="Transactions by User">
+      <ng-template matTabContent>
+        <mat-card class="filters-card">
+          <mat-card-content>
+            <h3>Select User</h3>
+            <div class="filters-row">
+              <mat-form-field appearance="outline" style="width: 300px;">
+                <mat-label>Select User</mat-label>
+                <mat-select [(ngModel)]="selectedUserId">
+                  <mat-option [value]="null">Select a user...</mat-option>
+                  <mat-option *ngFor="let user of users" [value]="user.id">
+                    {{ user.username }} ({{ user.email }})
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              
+              <button mat-raised-button color="primary" (click)="loadTransactionsByUser()" [disabled]="!selectedUserId">
+                <mat-icon>search</mat-icon>
+                Load Transactions
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="transactions-card" *ngIf="allTransactions.length > 0">
+          <mat-card-header>
+            <mat-card-title>User Transactions</mat-card-title>
+            <mat-card-subtitle>Transactions for selected user ({{ allTransactions.length }} total)</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <app-data-table
+              [columns]="allTransactionsColumns"
+              [data]="allTransactions"
+              [loading]="loading"
+              [pageSize]="allTransactionsPageSize"
+              (view)="onView($event)">
+            </app-data-table>
+          </mat-card-content>
+        </mat-card>
+      </ng-template>
+    </mat-tab>
+
+    <!-- Tab 2: All Statistics -->
+    <mat-tab label="All Statistics">
+      <ng-template matTabContent>
+        <div class="statistics-grid" *ngIf="allStatistics">
+          <mat-card class="stat-card stat-card-primary">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="stat-icon-wrapper icon-primary">
+                  <mat-icon>receipt</mat-icon>
+                </div>
+                <div class="stat-text">
+                  <h3>{{ allStatistics.totalTransactions || 0 | number }}</h3>
+                  <p>Total Transactions</p>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+          
+          <mat-card class="stat-card stat-card-danger">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="stat-icon-wrapper icon-danger">
+                  <mat-icon>warning</mat-icon>
+                </div>
+                <div class="stat-text">
+                  <h3>{{ allStatistics.fraudulentTransactions || 0 | number }}</h3>
+                  <p>Fraudulent Transactions</p>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+          
+          <mat-card class="stat-card stat-card-warning">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="stat-icon-wrapper icon-warning">
+                  <mat-icon>security</mat-icon>
+                </div>
+                <div class="stat-text">
+                  <h3>{{ allStatistics.highRiskTransactions || 0 | number }}</h3>
+                  <p>High Risk Transactions</p>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+          
+          <mat-card class="stat-card stat-card-success">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="stat-icon-wrapper icon-success">
+                  <mat-icon>attach_money</mat-icon>
+                </div>
+                <div class="stat-text">
+                  <h3 class="currency-value">
+                    <span class="currency-symbol">$</span>
+                    {{ allStatistics.totalAmount || 0 | number:'1.2-2' }}
+                  </h3>
+                  <p>Total Amount</p>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+          
+          <mat-card class="stat-card stat-card-info">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="stat-icon-wrapper icon-info">
+                  <mat-icon>trending_up</mat-icon>
+                </div>
+                <div class="stat-text">
+                  <h3 class="currency-value">
+                    <span class="currency-symbol">$</span>
+                    {{ allStatistics.averageAmount || 0 | number:'1.2-2' }}
+                  </h3>
+                  <p>Average Amount</p>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+          
+          <mat-card class="stat-card stat-card-purple">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="stat-icon-wrapper icon-purple">
+                  <mat-icon>assessment</mat-icon>
+                </div>
+                <div class="stat-text">
+                  <h3>{{ allStatistics.averageFraudScore || 0 | number:'1.2-2' }}</h3>
+                  <p>Average Fraud Score</p>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <mat-card *ngIf="allStatistics.riskLevelDistribution" class="distribution-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>pie_chart</mat-icon>
+              Risk Level Distribution
+            </mat-card-title>
+            <mat-card-subtitle>Breakdown of transaction risk levels</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="distribution-grid">
+              <div class="distribution-item distribution-low">
+                <div class="distribution-header">
+                  <mat-icon>check_circle</mat-icon>
+                  <span class="label">Low</span>
+                </div>
+                <div class="distribution-value">{{ allStatistics.riskLevelDistribution?.LOW || 0 }}</div>
+                <div class="distribution-bar">
+                  <div class="distribution-bar-fill fill-low" 
+                       [style.width.%]="getRiskDistributionPercentage(allStatistics.riskLevelDistribution?.LOW || 0, allStatistics.riskLevelDistribution)"></div>
+                </div>
+              </div>
+              
+              <div class="distribution-item distribution-medium">
+                <div class="distribution-header">
+                  <mat-icon>info</mat-icon>
+                  <span class="label">Medium</span>
+                </div>
+                <div class="distribution-value">{{ allStatistics.riskLevelDistribution?.MEDIUM || 0 }}</div>
+                <div class="distribution-bar">
+                  <div class="distribution-bar-fill fill-medium" 
+                       [style.width.%]="getRiskDistributionPercentage(allStatistics.riskLevelDistribution?.MEDIUM || 0, allStatistics.riskLevelDistribution)"></div>
+                </div>
+              </div>
+              
+              <div class="distribution-item distribution-high">
+                <div class="distribution-header">
+                  <mat-icon>warning</mat-icon>
+                  <span class="label">High</span>
+                </div>
+                <div class="distribution-value">{{ allStatistics.riskLevelDistribution?.HIGH || 0 }}</div>
+                <div class="distribution-bar">
+                  <div class="distribution-bar-fill fill-high" 
+                       [style.width.%]="getRiskDistributionPercentage(allStatistics.riskLevelDistribution?.HIGH || 0, allStatistics.riskLevelDistribution)"></div>
+                </div>
+              </div>
+              
+              <div class="distribution-item distribution-critical">
+                <div class="distribution-header">
+                  <mat-icon>error</mat-icon>
+                  <span class="label">Critical</span>
+                </div>
+                <div class="distribution-value">{{ allStatistics.riskLevelDistribution?.CRITICAL || 0 }}</div>
+                <div class="distribution-bar">
+                  <div class="distribution-bar-fill fill-critical" 
+                       [style.width.%]="getRiskDistributionPercentage(allStatistics.riskLevelDistribution?.CRITICAL || 0, allStatistics.riskLevelDistribution)"></div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </ng-template>
+    </mat-tab>
+
+    <!-- Tab 3: User Behaviors -->
+    <mat-tab label="User Behaviors">
+      <ng-template matTabContent>
+        <mat-card class="behaviors-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>people</mat-icon>
+              All User Behaviors
+            </mat-card-title>
+            <mat-card-subtitle>Behavioral patterns for all users ({{ userBehaviors.length }} total)</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <app-data-table
+              [columns]="userBehaviorColumns"
+              [data]="userBehaviors"
+              [loading]="loading"
+              [pageSize]="10"
+              [showActions]="false">
+            </app-data-table>
+          </mat-card-content>
+        </mat-card>
+      </ng-template>
+    </mat-tab>
+
+    <!-- Tab 4: Fraud Alerts -->
+    <mat-tab label="Fraud Alerts">
+      <ng-template matTabContent>
+        <mat-card class="fraud-alerts-card">
+          <mat-card-header>
+            <mat-card-title>
+              Fraud Alerts
+              <span *ngIf="activeFraudAlertsCount > 0" class="active-alerts-badge">
+                {{ activeFraudAlertsCount }} unsolved
+              </span>
+            </mat-card-title>
+            <mat-card-subtitle>
+              All fraud detection alerts ({{ fraudAlerts.length }} total)
+              <span *ngIf="activeFraudAlertsCount > 0" class="subtitle-badge">
+                • {{ activeFraudAlertsCount }} active
+              </span>
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <!-- Filter Section -->
+            <div class="fraud-alerts-filters">
+              <mat-form-field appearance="outline" class="filter-field">
+                <mat-label>Filter by Status</mat-label>
+                <mat-select [(ngModel)]="fraudAlertFilter" (selectionChange)="onFraudAlertFilterChange()">
+                  <mat-option value="all">
+                    All Alerts ({{ fraudAlerts.length }})
+                  </mat-option>
+                  <mat-option value="active">
+                    Active/Unsolved ({{ activeFraudAlertsCount }})
+                  </mat-option>
+                  <mat-option value="resolved">
+                    Resolved ({{ fraudAlerts.length - activeFraudAlertsCount }})
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              
+              <div class="filter-info" *ngIf="fraudAlertFilter !== 'all'">
+                <mat-icon>{{ fraudAlertFilter === 'active' ? 'warning' : 'check_circle' }}</mat-icon>
+                <span>
+                  Showing {{ filteredFraudAlerts.length }} 
+                  {{ fraudAlertFilter === 'active' ? 'active' : 'resolved' }} 
+                  {{ filteredFraudAlerts.length === 1 ? 'alert' : 'alerts' }}
+                </span>
+              </div>
+            </div>
+            
+            <app-data-table
+              [columns]="fraudAlertColumns"
+              [data]="filteredFraudAlerts"
+              [loading]="loading"
+              [pageSize]="10"
+              [pageSizeOptions]="[5, 10, 25, 50]"
+              [showActions]="true"
+              [showResolveButton]="isFraudAnalyst"
+              (view)="onViewFraudAlert($event)"
+              (resolve)="onResolveFraudAlert($event)">
+            </app-data-table>
+          </mat-card-content>
+        </mat-card>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+
+  <!-- Default view for regular users (no tabs) -->
+  <!-- Debug: isFraudAnalystOrAdmin = {{ isFraudAnalystOrAdmin }} -->
+  <div *ngIf="!isFraudAnalystOrAdmin">
+    <!-- Statistics Cards -->
+    <div class="statistics-grid" *ngIf="statistics">
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <mat-icon>receipt</mat-icon>
+            <div>
+              <h3>{{ statistics.totalTransactions || 0 }}</h3>
+              <p>Total Transactions</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <mat-icon>attach_money</mat-icon>
+            <div>
+              <h3>${{ statistics.totalAmount || 0 | number:'1.2-2' }}</h3>
+              <p>Total Amount</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <mat-icon>trending_up</mat-icon>
+            <div>
+              <h3>${{ statistics.averageAmount || 0 | number:'1.2-2' }}</h3>
+              <p>Average Amount</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Transaction Creation Form -->
+    <mat-card class="create-form-card" *ngIf="showCreateForm">
+      <mat-card-header>
+        <mat-card-title>Create New Transaction</mat-card-title>
+        <mat-card-subtitle>AI-powered fraud detection will analyze this transaction</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="transactionForm" (ngSubmit)="onCreateTransaction()">
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Amount</mat-label>
+              <input matInput type="number" formControlName="amount" placeholder="0.00" step="0.01">
+              <mat-error *ngIf="transactionForm.get('amount')?.hasError('required')">Amount is required</mat-error>
+              <mat-error *ngIf="transactionForm.get('amount')?.hasError('min')">Amount must be greater than 0</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Payment Method</mat-label>
+              <mat-select formControlName="paymentMethod">
+                <mat-option value="credit_card">Credit Card</mat-option>
+                <mat-option value="debit_card">Debit Card</mat-option>
+                <mat-option value="bank_transfer">Bank Transfer</mat-option>
+                <mat-option value="cash">Cash</mat-option>
+                <mat-option value="digital_wallet">Digital Wallet</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Merchant Name</mat-label>
+              <input matInput formControlName="merchantName" placeholder="e.g., Local Pharmacy">
+              <mat-error *ngIf="transactionForm.get('merchantName')?.hasError('required')">Merchant name is required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Device Type</mat-label>
+              <mat-select formControlName="deviceType">
+                <mat-option value="desktop">Desktop</mat-option>
+                <mat-option value="mobile">Mobile</mat-option>
+                <mat-option value="tablet">Tablet</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Location Country</mat-label>
+              <mat-select formControlName="locationCountry">
+                <mat-option value="US">United States</mat-option>
+                <mat-option value="CA">Canada</mat-option>
+                <mat-option value="UK">United Kingdom</mat-option>
+                <mat-option value="DE">Germany</mat-option>
+                <mat-option value="FR">France</mat-option>
+                <mat-option value="TN">Tunisia</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Transaction Type</mat-label>
+              <mat-select formControlName="transactionType">
+                <mat-option value="purchase">Purchase</mat-option>
+                <mat-option value="refund">Refund</mat-option>
+                <mat-option value="transfer">Transfer</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="form-actions">
+            <button mat-button type="button" (click)="toggleCreateForm()">Cancel</button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="transactionForm.invalid || loading">
+              <mat-icon>security</mat-icon>
+              Create Transaction with AI Analysis
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Transactions Table -->
+    <mat-card class="transactions-card">
+      <mat-card-header>
+        <mat-card-title>Transaction History</mat-card-title>
+        <mat-card-subtitle>Real-time fraud detection results</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <app-data-table
+          [columns]="columns"
+          [data]="transactions"
+          [loading]="loading"
+          [pageSize]="10"
+          [pageSizeOptions]="[5, 10, 25, 50]"
+              (view)="onView($event)">
+        </app-data-table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

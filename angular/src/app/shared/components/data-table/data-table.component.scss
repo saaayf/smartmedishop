@@ -1,0 +1,391 @@
+.table-container {
+  width: 100%;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.table-header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 24px;
+  background: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.search-field {
+  width: 300px;
+}
+
+.table-wrapper {
+  position: relative;
+  overflow: auto;
+  max-height: 600px;
+}
+
+.data-table {
+  width: 100%;
+  
+  // Header styling
+  ::ng-deep .mat-mdc-header-cell {
+    background-color: #fafafa;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #424242;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 16px 24px;
+    border-bottom: 2px solid #e0e0e0;
+  }
+
+  // Row styling
+  ::ng-deep .mat-mdc-row {
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+    
+    &:hover {
+      background-color: #f5f5f5;
+    }
+    
+    &:nth-child(even) {
+      background-color: #fafafa;
+    }
+  }
+
+  // Cell styling
+  ::ng-deep .mat-mdc-cell {
+    padding: 16px 24px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #424242;
+    font-size: 0.875rem;
+  }
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  backdrop-filter: blur(2px);
+}
+
+.no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+  color: #999;
+  
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+}
+
+// Currency styling
+.currency-value {
+  font-weight: 600;
+  color: #1976d2;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  
+  .currency-symbol {
+    font-size: 0.875rem;
+    color: #666;
+    font-weight: 500;
+  }
+}
+
+// Date styling
+.date-value {
+  color: #666;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+// Number styling
+.number-value {
+  font-weight: 500;
+  color: #424242;
+}
+
+// Empty value styling
+.empty-value {
+  color: #bbb;
+  font-style: italic;
+}
+
+// Notes cell styling
+.notes-cell {
+  max-width: 300px;
+  
+  .notes-text {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #555;
+    font-size: 0.875rem;
+    cursor: help;
+    
+    &:hover {
+      color: #1976d2;
+    }
+  }
+}
+
+// Status chips
+::ng-deep .status-chip {
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  padding: 4px 12px !important;
+  border-radius: 12px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  min-height: 24px !important;
+  height: auto !important;
+  
+  &.status-active {
+    background-color: #e8f5e9 !important;
+    color: #2e7d32 !important;
+  }
+  
+  &.status-resolved {
+    background-color: #e3f2fd !important;
+    color: #1565c0 !important;
+  }
+  
+  &.status-investigating {
+    background-color: #fff3e0 !important;
+    color: #e65100 !important;
+  }
+  
+  &.status-closed {
+    background-color: #f3e5f5 !important;
+    color: #7b1fa2 !important;
+  }
+  
+  &.status-pending,
+  &.status-processing {
+    background-color: #fff9c4 !important;
+    color: #f57f17 !important;
+  }
+  
+  &.status-completed,
+  &.status-success {
+    background-color: #c8e6c9 !important;
+    color: #1b5e20 !important;
+  }
+  
+  &.status-failed,
+  &.status-cancelled {
+    background-color: #ffcdd2 !important;
+    color: #c62828 !important;
+  }
+}
+
+// Severity chips
+::ng-deep .severity-chip {
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  padding: 6px 14px !important;
+  border-radius: 14px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  min-height: 28px !important;
+  height: auto !important;
+  
+  &.severity-low {
+    background-color: #c8e6c9 !important;
+    color: #1b5e20 !important;
+  }
+  
+  &.severity-medium {
+    background-color: #fff9c4 !important;
+    color: #f57f17 !important;
+  }
+  
+  &.severity-high {
+    background-color: #ffe0b2 !important;
+    color: #e65100 !important;
+  }
+  
+  &.severity-critical {
+    background-color: #ffcdd2 !important;
+    color: #c62828 !important;
+  }
+}
+
+// Risk level chips
+::ng-deep .risk-chip {
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  padding: 6px 14px !important;
+  border-radius: 14px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  min-height: 28px !important;
+  height: auto !important;
+  
+  &.risk-low {
+    background-color: #c8e6c9 !important;
+    color: #1b5e20 !important;
+  }
+  
+  &.risk-medium {
+    background-color: #fff9c4 !important;
+    color: #f57f17 !important;
+  }
+  
+  &.risk-high {
+    background-color: #ffe0b2 !important;
+    color: #e65100 !important;
+  }
+  
+  &.risk-critical {
+    background-color: #ffcdd2 !important;
+    color: #c62828 !important;
+  }
+}
+
+// Alert type chip
+::ng-deep .alert-type-chip {
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  padding: 4px 12px !important;
+  border-radius: 12px !important;
+  background-color: #e3f2fd !important;
+  color: #1565c0 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  min-height: 24px !important;
+  height: auto !important;
+}
+
+// Fraud score styling
+.fraud-score-value {
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 4px 10px;
+  border-radius: 8px;
+  
+  &.fraud-score-low {
+    color: #2e7d32;
+    background-color: #e8f5e9;
+  }
+  
+  &.fraud-score-medium {
+    color: #f57f17;
+    background-color: #fff9c4;
+  }
+  
+  &.fraud-score-high {
+    color: #c62828;
+    background-color: #ffcdd2;
+  }
+  
+  &.fraud-score-none {
+    color: #757575;
+  }
+}
+
+// Actions column
+.actions-header {
+  text-align: center;
+  width: 100px;
+}
+
+.actions-cell {
+  text-align: center;
+  width: 100px;
+  
+  .action-btn {
+    margin: 0 4px;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: scale(1.1);
+    }
+    
+    &.view-btn {
+      color: #1976d2;
+      
+      &:hover {
+        background-color: #e3f2fd;
+      }
+    }
+    
+    &.edit-btn {
+      color: #ff9800;
+      
+      &:hover {
+        background-color: #fff3e0;
+      }
+    }
+    
+    &.delete-btn {
+      color: #f44336;
+      
+      &:hover {
+        background-color: #ffebee;
+      }
+    }
+    
+    &.resolve-btn {
+      color: #4caf50;
+      
+      &:hover:not(:disabled) {
+        background-color: #e8f5e9;
+      }
+      
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+// Paginator styling
+::ng-deep .mat-mdc-paginator {
+  background-color: #fafafa;
+  border-top: 1px solid #e0e0e0;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .table-wrapper {
+    max-height: 400px;
+  }
+  
+  .data-table {
+    ::ng-deep .mat-mdc-header-cell,
+    ::ng-deep .mat-mdc-cell {
+      padding: 12px 16px;
+      font-size: 0.8125rem;
+    }
+  }
+  
+  .search-field {
+    width: 100%;
+    max-width: 300px;
+  }
+}

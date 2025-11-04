@@ -1,0 +1,47 @@
+<div class="dashboard-container">
+  <h1>SmartMediShop Dashboard</h1>
+  
+  <div class="stats-grid" *ngIf="!loading">
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-card-title>Total Users</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-value">{{ stats.totalUsers }}</div>
+        <mat-icon color="primary">people</mat-icon>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-card-title>Total Products</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-value">{{ stats.totalProducts }}</div>
+        <mat-icon color="accent">inventory</mat-icon>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-card-title>Total Orders</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-value">{{ stats.totalOrders }}</div>
+        <mat-icon color="warn">shopping_cart</mat-icon>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-card-title>Total Revenue</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-value">{{ stats.totalRevenue | currency:'TND' }}</div>
+        <mat-icon color="primary">attach_money</mat-icon>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <app-loading-spinner *ngIf="loading" message="Loading dashboard data..."></app-loading-spinner>
+</div>

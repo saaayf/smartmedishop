@@ -1,0 +1,95 @@
+<div class="resolve-fraud-alert-dialog">
+  <h2 mat-dialog-title>
+    <mat-icon>gavel</mat-icon>
+    Resolve Fraud Alert #{{ alert.id }}
+  </h2>
+  
+  <mat-dialog-content class="mat-typography">
+    <div class="alert-info">
+      <mat-card class="info-card">
+        <mat-card-content>
+          <div class="info-row">
+            <span class="label">Transaction ID:</span>
+            <span class="value">{{ alert.transactionId }}</span>
+          </div>
+          <div class="info-row" *ngIf="alert.username">
+            <span class="label">Username:</span>
+            <span class="value">{{ alert.username }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Amount:</span>
+            <span class="value">${{ alert.amount | number:'1.2-2' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Severity:</span>
+            <mat-chip *ngIf="alert.severity" class="severity-chip severity-{{ alert.severity.toLowerCase() }}">
+              {{ alert.severity }}
+            </mat-chip>
+            <span *ngIf="!alert.severity" class="value">N/A</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Fraud Score:</span>
+            <span class="value fraud-score-value" 
+                  [class]="'fraud-score-' + getFraudScoreClass(alert.fraudScore)">
+              {{ alert.fraudScore | number:'1.2-2' }}
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="notes-section">
+      <h3>Investigation Notes</h3>
+      <p class="helper-text">
+        Please provide detailed investigation notes explaining why this alert is being resolved. 
+        These notes will be saved with the alert for future reference.
+      </p>
+      
+      <form [formGroup]="resolveForm">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Investigation Notes</mat-label>
+          <textarea 
+            matInput 
+            formControlName="investigationNotes"
+            rows="6"
+            placeholder="Enter detailed investigation notes (minimum 10 characters)..."
+            [maxlength]="1000">
+          </textarea>
+          <mat-hint>
+            {{ resolveForm.get('investigationNotes')?.value?.length || 0 }} / 1000 characters
+          </mat-hint>
+          <mat-error *ngIf="resolveForm.get('investigationNotes')?.hasError('required')">
+            Investigation notes are required
+          </mat-error>
+          <mat-error *ngIf="resolveForm.get('investigationNotes')?.hasError('minlength')">
+            Investigation notes must be at least 10 characters
+          </mat-error>
+        </mat-form-field>
+      </form>
+    </div>
+
+    <div class="warning-section" *ngIf="alert.severity === 'CRITICAL' || alert.severity === 'HIGH'">
+      <mat-icon color="warn">warning</mat-icon>
+      <p>
+        <strong>Warning:</strong> This is a {{ alert.severity }} severity alert. 
+        Please ensure thorough investigation before resolving.
+      </p>
+    </div>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">
+      <mat-icon>close</mat-icon>
+      Cancel
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="onResolve()"
+      [disabled]="!resolveForm.valid">
+      <mat-icon>check_circle</mat-icon>
+      Resolve Alert
+    </button>
+  </mat-dialog-actions>
+</div>
+

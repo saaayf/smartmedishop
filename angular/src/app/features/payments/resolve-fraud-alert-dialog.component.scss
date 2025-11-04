@@ -1,0 +1,179 @@
+.resolve-fraud-alert-dialog {
+  padding: 20px;
+
+  .mat-dialog-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #3f51b5;
+
+    mat-icon {
+      font-size: 1.5em;
+      width: 1.5em;
+      height: 1.5em;
+    }
+  }
+
+  .alert-info {
+    margin-bottom: 24px;
+
+    .info-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+      .mat-card-content {
+        padding: 16px;
+
+        .info-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 12px 0;
+          border-bottom: 1px dashed #eee;
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          .label {
+            font-weight: 500;
+            color: #777;
+            font-size: 0.9rem;
+          }
+
+          .value {
+            color: #333;
+            font-weight: 600;
+            text-align: right;
+
+            &.fraud-score-value {
+              padding: 4px 10px;
+              border-radius: 8px;
+              font-weight: 700;
+              font-size: 1rem;
+
+              &.fraud-score-low {
+                color: #2e7d32;
+                background-color: #e8f5e9;
+              }
+
+              &.fraud-score-medium {
+                color: #f57f17;
+                background-color: #fff9c4;
+              }
+
+              &.fraud-score-high {
+                color: #c62828;
+                background-color: #ffcdd2;
+              }
+            }
+          }
+
+          ::ng-deep .severity-chip {
+            font-size: 0.75rem !important;
+            font-weight: 700 !important;
+            padding: 6px 14px !important;
+            border-radius: 14px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            min-height: 28px !important;
+            height: auto !important;
+
+            &.severity-low {
+              background-color: #c8e6c9 !important;
+              color: #1b5e20 !important;
+            }
+
+            &.severity-medium {
+              background-color: #fff9c4 !important;
+              color: #f57f17 !important;
+            }
+
+            &.severity-high {
+              background-color: #ffe0b2 !important;
+              color: #e65100 !important;
+            }
+
+            &.severity-critical {
+              background-color: #ffcdd2 !important;
+              color: #c62828 !important;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .notes-section {
+    margin-bottom: 24px;
+
+    h3 {
+      margin: 0 0 8px 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .helper-text {
+      margin: 0 0 16px 0;
+      color: #666;
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+
+    .full-width {
+      width: 100%;
+    }
+  }
+
+  .warning-section {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    background-color: #fff3e0;
+    border-left: 4px solid #ff9800;
+    border-radius: 4px;
+    margin-bottom: 16px;
+
+    mat-icon {
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    p {
+      margin: 0;
+      color: #e65100;
+      font-size: 0.9rem;
+      line-height: 1.5;
+
+      strong {
+        font-weight: 600;
+      }
+    }
+  }
+
+  .mat-dialog-actions {
+    padding: 16px 0 0 0;
+    margin-top: 24px;
+    border-top: 1px solid #e0e0e0;
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: 8px;
+
+      mat-icon {
+        font-size: 1.2rem;
+        width: 1.2rem;
+        height: 1.2rem;
+      }
+    }
+  }
+}
+

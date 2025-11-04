@@ -1,0 +1,154 @@
+<div class="table-container">
+  <div class="table-header">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Search...">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div class="table-wrapper">
+    <table mat-table [dataSource]="dataSource" class="data-table">
+      <ng-container *ngFor="let column of columns" [matColumnDef]="column.key">
+        <th mat-header-cell *matHeaderCellDef [style.width]="column.width">
+          {{ column.title }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <!-- Boolean type -->
+          <span *ngIf="column.type === 'boolean'">
+            <mat-icon [color]="element[column.key] ? 'primary' : 'warn'">
+              {{ element[column.key] ? 'check_circle' : 'cancel' }}
+            </mat-icon>
+          </span>
+          
+          <!-- Currency type -->
+          <span *ngIf="column.type === 'currency'" class="currency-value">
+            <span class="currency-symbol">$</span>
+            {{ element[column.key] | number:'1.2-2' }}
+          </span>
+          
+          <!-- Date type -->
+          <span *ngIf="column.type === 'date'" class="date-value">
+            {{ element[column.key] | date:'medium' }}
+          </span>
+          
+          <!-- Status type (with chip) -->
+          <mat-chip *ngIf="column.key === 'status'" 
+                    [class]="'status-chip status-' + (element[column.key]?.toLowerCase() || 'unknown')">
+            {{ element[column.key] }}
+          </mat-chip>
+          
+          <!-- Severity type (with colored badge) -->
+          <mat-chip *ngIf="column.key === 'severity'" 
+                    [class]="'severity-chip severity-' + (element[column.key]?.toLowerCase() || 'unknown')">
+            {{ element[column.key] }}
+          </mat-chip>
+          
+          <!-- Risk Level type (with colored badge) -->
+          <mat-chip *ngIf="column.key === 'riskLevel'" 
+                    [class]="'risk-chip risk-' + (element[column.key]?.toLowerCase() || 'unknown')">
+            {{ element[column.key] }}
+          </mat-chip>
+          
+          <!-- Alert Type with chip -->
+          <mat-chip *ngIf="column.key === 'alertType'" 
+                    class="alert-type-chip">
+            {{ element[column.key] }}
+          </mat-chip>
+          
+          <!-- Fraud Score with color indicator -->
+          <span *ngIf="column.key === 'fraudScore'" 
+                [class]="'fraud-score-value fraud-score-' + getFraudScoreClass(element[column.key])">
+            {{ element[column.key] | number:'1.2-2' }}
+          </span>
+          
+          <!-- Number type -->
+          <span *ngIf="column.type === 'number' && column.key !== 'fraudScore'" class="number-value">
+            {{ element[column.key] }}
+          </span>
+          
+          <!-- Investigation Notes with expandable view -->
+          <div *ngIf="column.key === 'investigationNotes'" class="notes-cell">
+            <span *ngIf="!element[column.key] || element[column.key] === ''" class="empty-value">—</span>
+            <span *ngIf="element[column.key] && element[column.key] !== ''" 
+                  class="notes-text"
+                  [matTooltip]="element[column.key]"
+                  matTooltipPosition="above">
+              {{ element[column.key] }}
+            </span>
+          </div>
+          
+          <!-- Text type (default) - exclude special chip columns -->
+          <span *ngIf="(column.type === 'text' || !column.type) && 
+                       column.key !== 'status' && 
+                       column.key !== 'severity' && 
+                       column.key !== 'riskLevel' && 
+                       column.key !== 'alertType' && 
+                       column.key !== 'fraudScore' &&
+                       column.key !== 'investigationNotes'">
+            <span *ngIf="!element[column.key] || element[column.key] === ''" class="empty-value">—</span>
+            <span *ngIf="element[column.key] && element[column.key] !== ''">{{ element[column.key] }}</span>
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions" *ngIf="showActions">
+        <th mat-header-cell *matHeaderCellDef class="actions-header">{{ actionsLabel }}</th>
+        <td mat-cell *matCellDef="let element" class="actions-cell">
+          <button mat-icon-button 
+                  (click)="onView(element)" 
+                  matTooltip="View Details"
+                  class="action-btn view-btn"
+                  color="primary">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button *ngIf="showEditButton" 
+                  mat-icon-button 
+                  (click)="onEdit(element)" 
+                  matTooltip="Edit"
+                  class="action-btn edit-btn"
+                  color="accent">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button *ngIf="showDeleteButton" 
+                  mat-icon-button 
+                  (click)="onDelete(element)" 
+                  matTooltip="Delete"
+                  class="action-btn delete-btn"
+                  color="warn">
+            <mat-icon>delete</mat-icon>
+          </button>
+          <button *ngIf="showResolveButton" 
+                  mat-icon-button 
+                  (click)="onResolve(element)" 
+                  matTooltip="Resolve Alert"
+                  class="action-btn resolve-btn"
+                  color="accent"
+                  [disabled]="element.status === 'RESOLVED'">
+            <mat-icon>check_circle</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <div *ngIf="loading" class="loading-overlay">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <div *ngIf="dataSource.data.length === 0 && !loading" class="no-data">
+      <mat-icon>inbox</mat-icon>
+      <p>No data available</p>
+    </div>
+  </div>
+
+  <mat-paginator 
+    [pageSizeOptions]="pageSizeOptions" 
+    [pageSize]="pageSize"
+    [length]="serverSidePagination ? totalItems : dataSource.data.length"
+    [pageIndex]="serverSidePagination ? currentPage : undefined"
+    showFirstLastButtons>
+  </mat-paginator>
+</div>

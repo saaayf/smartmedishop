@@ -1,0 +1,31 @@
+.edit-form {
+  min-width: 500px;
+  padding: 20px 0;
+
+  .form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+
+    mat-form-field {
+      flex: 1;
+    }
+
+    .full-width {
+      width: 100%;
+    }
+  }
+
+  .checkbox-group {
+    display: flex;
+    gap: 24px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+  }
+}
+
+::ng-deep .mat-mdc-dialog-content {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+

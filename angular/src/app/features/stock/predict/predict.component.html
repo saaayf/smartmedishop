@@ -1,0 +1,27 @@
+<div class="predict-root">
+  <mat-card *ngIf="prediction && !loading">
+    <mat-card-title>Prédiction pour {{ prediction.productNameUsed || ('Produit ' + productId) }}</mat-card-title>
+    <mat-card-content>
+      <div class="row">
+        <div class="left">
+          <p><strong>Demande prévue :</strong> <span class="value">{{ prediction.predictedDemand | number:'1.0-2' }}</span></p>
+          <p><strong>Stock recommandé :</strong> <span class="value recommended">{{ prediction.recommendedStock }}</span></p>
+          <p><strong>Rupture prédite :</strong> <span class="value">{{ prediction.lowStock ? 'Oui' : 'Non' }}</span></p>
+        </div>
+        <div class="right">
+          <p><strong>Confiance :</strong></p>
+          <mat-chip [color]="confidenceBadgeColor()" selected>{{ prediction.confidence | number:'1.2-2' }}</mat-chip>
+        </div>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button (click)="loadPrediction()">Rafraîchir</button>
+    </mat-card-actions>
+  </mat-card>
+
+  <div *ngIf="loading" class="spinner">
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+  </div>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+</div>

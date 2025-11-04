@@ -1,0 +1,139 @@
+.not-found-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8f5e8 100%);
+  padding: 20px;
+}
+
+.not-found-content {
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+}
+
+.error-code {
+  margin-bottom: 20px;
+  
+  h1 {
+    font-size: 120px;
+    font-weight: bold;
+    color: #2E7D32;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    
+    @media (max-width: 768px) {
+      font-size: 80px;
+    }
+  }
+}
+
+.error-message {
+  margin-bottom: 40px;
+  
+  h2 {
+    font-size: 32px;
+    color: #333;
+    margin: 0 0 16px 0;
+    font-weight: 500;
+    
+    @media (max-width: 768px) {
+      font-size: 24px;
+    }
+  }
+  
+  p {
+    font-size: 18px;
+    color: #666;
+    margin: 0;
+    line-height: 1.5;
+    
+    @media (max-width: 768px) {
+      font-size: 16px;
+    }
+  }
+}
+
+.error-illustration {
+  margin-bottom: 40px;
+  position: relative;
+  
+  .error-icon {
+    font-size: 80px;
+    width: 80px;
+    height: 80px;
+    color: #2E7D32;
+    margin-bottom: 20px;
+  }
+  
+  .medical-symbols {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    
+    .symbol {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+      color: #60AD5E;
+      animation: heartbeat 1.5s ease-in-out infinite;
+      
+      &:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      
+      &:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+    }
+  }
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  
+  button {
+    min-width: 160px;
+    height: 48px;
+    font-size: 16px;
+    font-weight: 500;
+    
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+.help-text {
+  p {
+    color: #999;
+    font-size: 14px;
+    margin: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+    
+    button {
+      width: 100%;
+      max-width: 200px;
+    }
+  }
+}

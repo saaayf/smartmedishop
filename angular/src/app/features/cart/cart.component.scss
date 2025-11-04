@@ -1,0 +1,179 @@
+.cart-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1 {
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.cart-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+}
+
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cart-item {
+  mat-card-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+}
+
+.item-info {
+  flex: 1;
+  
+  h3 {
+    margin: 0 0 8px 0;
+    color: #333;
+  }
+  
+  .sku {
+    color: #666;
+    font-size: 12px;
+    margin: 0 0 4px 0;
+    font-weight: 500;
+  }
+
+  .description {
+    color: #666;
+    font-size: 14px;
+    margin: 0 0 8px 0;
+  }
+  
+  .price {
+    color: #2E7D32;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+  }
+
+  .stock-info {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #666;
+    font-size: 13px;
+    margin: 0;
+
+    .stock-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  .quantity {
+    min-width: 30px;
+    text-align: center;
+    font-weight: bold;
+  }
+}
+
+.item-total {
+  min-width: 100px;
+  text-align: right;
+  color: #2E7D32;
+  font-size: 18px;
+}
+
+.cart-summary {
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    
+    &.total {
+      font-size: 18px;
+      font-weight: bold;
+      color: #2E7D32;
+    }
+  }
+
+  .cart-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 12px;
+    background-color: #e3f2fd;
+    border-radius: 4px;
+
+    mat-icon {
+      flex-shrink: 0;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: rgba(0, 0, 0, 0.7);
+    }
+  }
+
+  mat-card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+
+    button {
+      width: 100%;
+
+      mat-spinner {
+        display: inline-block;
+        margin-right: 8px;
+      }
+
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 60px 20px;
+  
+  mat-icon {
+    font-size: 80px;
+    width: 80px;
+    height: 80px;
+    color: #ccc;
+    margin-bottom: 20px;
+  }
+  
+  h2 {
+    color: #666;
+    margin-bottom: 12px;
+  }
+  
+  p {
+    color: #999;
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .cart-content {
+    grid-template-columns: 1fr;
+  }
+}

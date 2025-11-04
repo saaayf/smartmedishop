@@ -1,0 +1,14 @@
+.predict-root {
+  max-width: 840px;
+  margin: 16px auto;
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+}
+.left { flex: 1; }
+.right { width: 160px; text-align: center; }
+.value { font-size: 1.15rem; }
+.recommended { color: #1b5e20; font-weight: 700; }
+.spinner { display:flex; justify-content:center; padding:24px; }
+.error { color: #b00020; padding:12px; }

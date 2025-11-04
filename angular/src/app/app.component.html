@@ -1,0 +1,128 @@
+<!-- Navigation toolbar - only show when authenticated -->
+<mat-toolbar color="primary" *ngIf="authService.isAuthenticated()">
+  <span>SmartMediShop - AI Fraud Detection</span>
+  <span class="spacer"></span>
+  
+  <!-- Navigation menu -->
+  <button mat-button routerLink="/dashboard" routerLinkActive="active">
+    <mat-icon>dashboard</mat-icon>
+    Dashboard
+  </button>
+  <!-- Transactions Menu (with dropdown for FRAUD_ANALYST/ADMIN) -->
+  <button mat-button [matMenuTriggerFor]="transactionsMenu" *ngIf="isFraudAnalystOrAdmin()">
+    <mat-icon>payment</mat-icon>
+    Transactions
+    <mat-icon>arrow_drop_down</mat-icon>
+  </button>
+  <mat-menu #transactionsMenu="matMenu">
+    <button mat-menu-item (click)="navigateToTransactionTab(0)">
+      <mat-icon>list</mat-icon>
+      <span>All Transactions</span>
+    </button>
+    <button mat-menu-item (click)="navigateToTransactionTab(1)">
+      <mat-icon>person</mat-icon>
+      <span>Transactions by User</span>
+    </button>
+    <button mat-menu-item (click)="navigateToTransactionTab(2)">
+      <mat-icon>assessment</mat-icon>
+      <span>All Statistics</span>
+    </button>
+    <button mat-menu-item (click)="navigateToTransactionTab(3)">
+      <mat-icon>psychology</mat-icon>
+      <span>User Behaviors</span>
+    </button>
+    <button mat-menu-item (click)="navigateToTransactionTab(4)">
+      <mat-icon>warning</mat-icon>
+      <span>Fraud Alerts</span>
+      <span *ngIf="activeFraudAlertsCount > 0" 
+            class="notification-badge">
+        {{ activeFraudAlertsCount }}
+      </span>
+    </button>
+  </mat-menu>
+  
+  <!-- Regular Transactions link for non-FRAUD_ANALYST/ADMIN -->
+  <button mat-button routerLink="/payments" routerLinkActive="active" *ngIf="!isFraudAnalystOrAdmin()">
+    <mat-icon>payment</mat-icon>
+    Transactions
+  </button>
+  
+  <button mat-button routerLink="/users" routerLinkActive="active" *ngIf="canAccessUsers()">
+    <mat-icon>people</mat-icon>
+    Users
+  </button>
+  <button mat-button routerLink="/services" routerLinkActive="active">
+    <mat-icon>medical_services</mat-icon>
+    Services
+  </button>
+  <button mat-button routerLink="/clients" routerLinkActive="active">
+    <mat-icon>person</mat-icon>
+    Clients
+  </button>
+  
+  <!-- Stock Menu (with dropdown for ADMIN) -->
+  <button mat-button [matMenuTriggerFor]="stockMenu" *ngIf="isAdmin()">
+    <mat-icon>inventory</mat-icon>
+    Stock
+    <mat-icon>arrow_drop_down</mat-icon>
+  </button>
+  <mat-menu #stockMenu="matMenu">
+    <button mat-menu-item routerLink="/stock/products">
+      <mat-icon>list</mat-icon>
+      <span>Produits</span>
+    </button>
+    <button mat-menu-item routerLink="/stock/products/new">
+      <mat-icon>add</mat-icon>
+      <span>Ajouter un produit</span>
+    </button>
+    <button mat-menu-item routerLink="/stock/movements/new">
+      <mat-icon>swap_horiz</mat-icon>
+      <span>Enregistrer un mouvement</span>
+    </button>
+  </mat-menu>
+  
+  <!-- Regular Stock link for non-ADMIN -->
+  <button mat-button routerLink="/stock/products" routerLinkActive="active" *ngIf="!isAdmin()">
+    <mat-icon>inventory</mat-icon>
+    Stock
+  </button>
+
+  <!-- Cart button with badge -->
+  <button mat-button routerLink="/cart" routerLinkActive="active" class="cart-button">
+    <mat-icon [matBadge]="cartItemsCount" 
+              [matBadgeHidden]="cartItemsCount === 0"
+              matBadgeColor="warn">
+      shopping_cart
+    </mat-icon>
+    Panier
+  </button>
+  
+  <!-- User menu -->
+  <button mat-icon-button [matMenuTriggerFor]="userMenu">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+  <mat-menu #userMenu="matMenu">
+    <div mat-menu-item>
+      <mat-icon>person</mat-icon>
+      <span>{{ authService.getCurrentUser()?.username }}</span>
+    </div>
+    <div mat-menu-item>
+      <mat-icon>email</mat-icon>
+      <span>{{ authService.getCurrentUser()?.email }}</span>
+    </div>
+    <div mat-menu-item>
+      <mat-icon>security</mat-icon>
+      <span>{{ authService.getCurrentUser()?.userType }}</span>
+    </div>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Logout</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>
+
+<!-- Main content area -->
+<main class="main-content" [class.authenticated]="authService.isAuthenticated()">
+  <router-outlet></router-outlet>
+</main>

@@ -1,0 +1,318 @@
+.product-detail-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    
+    p {
+      margin-top: 16px;
+      color: rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      h1 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .product-info-card {
+    margin-bottom: 24px;
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+
+      .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        .label {
+          font-size: 12px;
+          color: rgba(0, 0, 0, 0.6);
+          text-transform: uppercase;
+          font-weight: 500;
+        }
+
+        .value {
+          font-size: 16px;
+          color: rgba(0, 0, 0, 0.87);
+
+          &.low-stock {
+            color: #d32f2f;
+            font-weight: 600;
+          }
+
+          &.expired {
+            color: #f57c00;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+
+    .status-badges {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding-top: 12px;
+      border-top: 1px solid rgba(0, 0, 0, 0.12);
+
+      mat-chip {
+        mat-icon {
+          margin-right: 4px;
+        }
+
+        &.expired-chip {
+          background-color: #ff9800;
+          color: white;
+        }
+      }
+    }
+  }
+
+  .info-message-card {
+    margin-bottom: 24px;
+    background-color: #e3f2fd;
+    box-shadow: none;
+
+    mat-card-content {
+      padding: 16px;
+
+      .info-content {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+
+        mat-icon {
+          flex-shrink: 0;
+        }
+
+        .info-text {
+          margin: 0;
+          font-size: 14px;
+          line-height: 1.5;
+          color: rgba(0, 0, 0, 0.87);
+
+          strong {
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+
+  .detail-tabs {
+    .tab-content {
+      padding: 24px 0;
+
+      .info-alert-card {
+        margin-bottom: 16px;
+        background-color: #fff3e0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+        mat-card-content {
+          padding: 12px;
+
+          .info-content {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+
+            mat-icon {
+              flex-shrink: 0;
+            }
+
+            .info-text {
+              margin: 0;
+              font-size: 13px;
+              line-height: 1.5;
+              color: rgba(0, 0, 0, 0.87);
+
+              strong {
+                font-weight: 600;
+                color: #f57c00;
+              }
+            }
+          }
+        }
+      }
+
+      .no-data {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        color: rgba(0, 0, 0, 0.6);
+
+        mat-icon {
+          font-size: 64px;
+          width: 64px;
+          height: 64px;
+          margin-bottom: 16px;
+          opacity: 0.5;
+        }
+
+        p {
+          font-size: 18px;
+          margin: 0;
+        }
+
+        .hint {
+          font-size: 14px;
+          color: rgba(0, 0, 0, 0.5);
+          margin-top: 8px;
+        }
+      }
+
+      table {
+        width: 100%;
+        margin-top: 16px;
+
+        th {
+          font-weight: 600;
+          background-color: #f5f5f5;
+        }
+
+        .movement-in {
+          background-color: #4caf50;
+          color: white;
+
+          mat-icon {
+            color: white;
+          }
+        }
+
+        .movement-out {
+          background-color: #f44336;
+          color: white;
+
+          mat-icon {
+            color: white;
+          }
+        }
+      }
+
+      .alerts-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin-top: 16px;
+
+        .alert-card {
+          .alert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+
+            mat-chip {
+              &.alert-active {
+                background-color: #f44336;
+                color: white;
+
+                mat-icon {
+                  color: white;
+                }
+              }
+
+              &.alert-resolved {
+                background-color: #9e9e9e;
+                color: white;
+
+                mat-icon {
+                  color: white;
+                }
+              }
+            }
+
+            .alert-date {
+              font-size: 14px;
+              color: rgba(0, 0, 0, 0.6);
+              display: flex;
+              align-items: center;
+              gap: 8px;
+
+              .generated-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                padding: 2px 8px;
+                background-color: #e0e0e0;
+                border-radius: 12px;
+                font-size: 11px;
+                font-weight: 500;
+                color: rgba(0, 0, 0, 0.7);
+
+                mat-icon {
+                  font-size: 14px;
+                  width: 14px;
+                  height: 14px;
+                }
+              }
+            }
+          }
+
+          .alert-body {
+            .alert-type {
+              font-size: 12px;
+              color: rgba(0, 0, 0, 0.6);
+              text-transform: uppercase;
+              font-weight: 500;
+              margin: 0 0 8px 0;
+            }
+
+            .alert-message {
+              font-size: 16px;
+              color: rgba(0, 0, 0, 0.87);
+              margin: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .product-detail-container {
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+
+      button {
+        width: 100%;
+      }
+    }
+
+    .product-info-card {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}

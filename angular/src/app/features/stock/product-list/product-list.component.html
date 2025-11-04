@@ -1,0 +1,140 @@
+<div class="product-list-container">
+  <div class="header">
+    <h1>Gestion des Produits</h1>
+    <div class="header-actions">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Rechercher</mat-label>
+        <input matInput 
+               [(ngModel)]="searchTerm" 
+               (keyup)="filterProducts()" 
+               placeholder="Nom ou SKU...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      
+      <button mat-raised-button 
+              color="primary" 
+              *ngIf="isAdmin()"
+              (click)="createProduct()">
+        <mat-icon>add</mat-icon>
+        Ajouter un produit
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Chargement en cours...</p>
+  </div>
+
+  <div *ngIf="!loading && filteredProducts.length === 0" class="no-data">
+    <mat-icon>inventory_2</mat-icon>
+    <p>Aucun produit trouvé</p>
+  </div>
+
+  <div *ngIf="!loading && filteredProducts.length > 0" class="table-container">
+    <table mat-table [dataSource]="filteredProducts" class="mat-elevation-z2">
+      
+      <!-- SKU Column -->
+      <ng-container matColumnDef="sku">
+        <th mat-header-cell *matHeaderCellDef>SKU</th>
+        <td mat-cell *matCellDef="let product">
+          <strong>{{ product.sku }}</strong>
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Nom</th>
+        <td mat-cell *matCellDef="let product">{{ product.name }}</td>
+      </ng-container>
+
+      <!-- Description Column -->
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef>Description</th>
+        <td mat-cell *matCellDef="let product">
+          {{ truncateDescription(product.description) }}
+        </td>
+      </ng-container>
+
+      <!-- Quantity Column -->
+      <ng-container matColumnDef="quantity">
+        <th mat-header-cell *matHeaderCellDef>Quantité</th>
+        <td mat-cell *matCellDef="let product">
+          <span [class.low-stock]="isLowStock(product)">
+            {{ product.quantity }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Threshold Column -->
+      <ng-container matColumnDef="threshold">
+        <th mat-header-cell *matHeaderCellDef>Seuil d'alerte</th>
+        <td mat-cell *matCellDef="let product">{{ product.lowStockThreshold }}</td>
+      </ng-container>
+
+      <!-- Price Column -->
+      <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef>Prix</th>
+        <td mat-cell *matCellDef="let product">{{ product.price | currency:'EUR' }}</td>
+      </ng-container>
+
+      <!-- Expiration Date Column -->
+      <ng-container matColumnDef="expirationDate">
+        <th mat-header-cell *matHeaderCellDef>Date d'expiration</th>
+        <td mat-cell *matCellDef="let product">
+          <span [class.expired]="isExpired(product)">
+            {{ product.expirationDate | date:'dd/MM/yyyy' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <td mat-cell *matCellDef="let product">
+          <mat-chip-set>
+            <mat-chip *ngIf="isLowStock(product)" color="warn">
+              <mat-icon>warning</mat-icon>
+              Stock bas
+            </mat-chip>
+            <mat-chip *ngIf="isExpired(product)" class="expired-chip">
+              <mat-icon>schedule</mat-icon>
+              Expiré
+            </mat-chip>
+          </mat-chip-set>
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let product">
+          <button mat-icon-button 
+                  [matTooltip]="'Détails'"
+                  (click)="viewDetails(product.id)">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          
+          <button mat-icon-button 
+                  *ngIf="isAdmin()"
+                  [matTooltip]="'Modifier'"
+                  color="primary"
+                  (click)="editProduct(product.id)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          
+          <button mat-icon-button 
+                  *ngIf="!isAdmin()"
+                  [matTooltip]="'Ajouter au panier'"
+                  color="accent"
+                  (click)="addToCart(product)">
+            <mat-icon>shopping_cart</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+</div>

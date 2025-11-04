@@ -1,0 +1,131 @@
+<div class="product-form-container">
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Chargement en cours...</p>
+  </div>
+
+  <div *ngIf="!loading" class="form-content">
+    <div class="header">
+      <h1>{{ isEditMode ? 'Modifier le produit' : 'Nouveau produit' }}</h1>
+    </div>
+
+    <mat-card>
+      <mat-card-content>
+        <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+          <div class="form-grid">
+            <!-- SKU -->
+            <mat-form-field appearance="outline">
+              <mat-label>SKU</mat-label>
+              <input matInput 
+                     formControlName="sku" 
+                     placeholder="Ex: PARACETAMOL001">
+              <mat-icon matSuffix>qr_code</mat-icon>
+              <mat-error *ngIf="productForm.get('sku')?.invalid">
+                {{ getErrorMessage('sku') }}
+              </mat-error>
+              <mat-hint *ngIf="isEditMode">Le SKU ne peut pas être modifié</mat-hint>
+            </mat-form-field>
+
+            <!-- Name -->
+            <mat-form-field appearance="outline">
+              <mat-label>Nom</mat-label>
+              <input matInput 
+                     formControlName="name" 
+                     placeholder="Ex: Paracétamol 500mg">
+              <mat-icon matSuffix>label</mat-icon>
+              <mat-error *ngIf="productForm.get('name')?.invalid">
+                {{ getErrorMessage('name') }}
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Price -->
+            <mat-form-field appearance="outline">
+              <mat-label>Prix</mat-label>
+              <input matInput 
+                     type="number" 
+                     formControlName="price" 
+                     step="0.01"
+                     placeholder="0.00">
+              <span matPrefix>€&nbsp;</span>
+              <mat-error *ngIf="productForm.get('price')?.invalid">
+                {{ getErrorMessage('price') }}
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Quantity -->
+            <mat-form-field appearance="outline">
+              <mat-label>Quantité en stock</mat-label>
+              <input matInput 
+                     type="number" 
+                     formControlName="quantity" 
+                     placeholder="0">
+              <mat-icon matSuffix>inventory_2</mat-icon>
+              <mat-error *ngIf="productForm.get('quantity')?.invalid">
+                {{ getErrorMessage('quantity') }}
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Low Stock Threshold -->
+            <mat-form-field appearance="outline">
+              <mat-label>Seuil d'alerte</mat-label>
+              <input matInput 
+                     type="number" 
+                     formControlName="lowStockThreshold" 
+                     placeholder="0">
+              <mat-icon matSuffix>warning</mat-icon>
+              <mat-error *ngIf="productForm.get('lowStockThreshold')?.invalid">
+                {{ getErrorMessage('lowStockThreshold') }}
+              </mat-error>
+              <mat-hint>Alerte quand le stock descend sous ce seuil</mat-hint>
+            </mat-form-field>
+
+            <!-- Expiration Date -->
+            <mat-form-field appearance="outline">
+              <mat-label>Date d'expiration</mat-label>
+              <input matInput 
+                     type="date" 
+                     formControlName="expirationDate">
+              <mat-icon matSuffix>event</mat-icon>
+              <mat-error *ngIf="productForm.get('expirationDate')?.invalid">
+                {{ getErrorMessage('expirationDate') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Description (full width) -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea matInput 
+                      formControlName="description" 
+                      rows="4"
+                      placeholder="Description détaillée du produit..."></textarea>
+            <mat-icon matSuffix>description</mat-icon>
+            <mat-error *ngIf="productForm.get('description')?.invalid">
+              {{ getErrorMessage('description') }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Action Buttons -->
+          <div class="form-actions">
+            <button mat-button 
+                    type="button" 
+                    (click)="cancel()"
+                    [disabled]="saving">
+              Annuler
+            </button>
+            <button mat-raised-button 
+                    color="primary" 
+                    type="submit"
+                    [disabled]="productForm.invalid || saving">
+              <mat-spinner *ngIf="saving" diameter="20"></mat-spinner>
+              <span *ngIf="!saving">
+                <mat-icon>save</mat-icon>
+                {{ isEditMode ? 'Enregistrer' : 'Créer' }}
+              </span>
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

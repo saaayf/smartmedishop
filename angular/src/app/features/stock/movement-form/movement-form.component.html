@@ -1,0 +1,114 @@
+<div class="movement-form-container">
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Chargement en cours...</p>
+  </div>
+
+  <div *ngIf="!loading" class="form-content">
+    <div class="header">
+      <h1>Enregistrer un mouvement de stock</h1>
+    </div>
+
+    <mat-card>
+      <mat-card-content>
+        <form [formGroup]="movementForm" (ngSubmit)="onSubmit()">
+          <!-- Product Selection -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Produit</mat-label>
+            <mat-select formControlName="productId" placeholder="Sélectionnez un produit">
+              <mat-option *ngFor="let product of products" [value]="product.id">
+                <span class="product-option">
+                  <strong>{{ product.sku }}</strong> - {{ product.name }}
+                  <span class="product-stock">(Stock: {{ product.quantity }})</span>
+                </span>
+              </mat-option>
+            </mat-select>
+            <mat-icon matSuffix>inventory_2</mat-icon>
+            <mat-error *ngIf="movementForm.get('productId')?.invalid">
+              {{ getErrorMessage('productId') }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Movement Type -->
+          <div class="movement-type-section">
+            <label class="section-label">Type de mouvement</label>
+            <mat-radio-group formControlName="movementType" class="movement-type-group">
+              <mat-radio-button *ngFor="let type of movementTypes" 
+                                [value]="type.value"
+                                [class]="'movement-' + type.value.toLowerCase()">
+                <mat-icon>{{ type.icon }}</mat-icon>
+                {{ type.label }}
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
+
+          <div class="form-row">
+            <!-- Quantity -->
+            <mat-form-field appearance="outline">
+              <mat-label>Quantité</mat-label>
+              <input matInput 
+                     type="number" 
+                     formControlName="quantity" 
+                     min="1"
+                     placeholder="1">
+              <mat-icon matSuffix>add_box</mat-icon>
+              <mat-error *ngIf="movementForm.get('quantity')?.invalid">
+                {{ getErrorMessage('quantity') }}
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Reason -->
+            <mat-form-field appearance="outline">
+              <mat-label>Raison</mat-label>
+              <mat-select formControlName="reason" placeholder="Sélectionnez une raison">
+                <mat-option *ngFor="let reason of reasons" [value]="reason.value">
+                  {{ reason.label }}
+                </mat-option>
+              </mat-select>
+              <mat-icon matSuffix>description</mat-icon>
+              <mat-error *ngIf="movementForm.get('reason')?.invalid">
+                {{ getErrorMessage('reason') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Info Message -->
+          <mat-card class="info-card">
+            <mat-card-content>
+              <div class="info-content">
+                <mat-icon color="primary">info</mat-icon>
+                <div>
+                  <p class="info-title">Information</p>
+                  <p class="info-text">
+                    Le stock sera automatiquement mis à jour après l'enregistrement du mouvement.
+                    <strong>Entrée (IN)</strong> augmentera le stock, <strong>Sortie (OUT)</strong> le diminuera.
+                  </p>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Action Buttons -->
+          <div class="form-actions">
+            <button mat-button 
+                    type="button" 
+                    (click)="cancel()"
+                    [disabled]="saving">
+              Annuler
+            </button>
+            <button mat-raised-button 
+                    color="primary" 
+                    type="submit"
+                    [disabled]="movementForm.invalid || saving">
+              <mat-spinner *ngIf="saving" diameter="20"></mat-spinner>
+              <span *ngIf="!saving">
+                <mat-icon>save</mat-icon>
+                Enregistrer le mouvement
+              </span>
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

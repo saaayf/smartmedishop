@@ -1,0 +1,12 @@
+pandas
+numpy
+scikit-learn
+matplotlib
+seaborn
+joblib
+openpyxl
+flask
+flask-cors
+imbalanced-learn
+# Optional (faster/more accurate models)
+xgboost

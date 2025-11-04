@@ -1,0 +1,357 @@
+.transaction-details-dialog {
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .details-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 500px;
+    max-width: 600px;
+  }
+
+  .detail-section {
+    margin-bottom: 16px;
+
+    mat-card-header {
+      background-color: #f5f5f5;
+      padding: 12px 16px;
+      margin: -16px -16px 16px -16px;
+
+      mat-card-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0;
+      }
+    }
+
+    mat-card-content {
+      padding: 16px;
+    }
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #e0e0e0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .label {
+      font-weight: 500;
+      color: #666;
+      min-width: 150px;
+    }
+
+    .value {
+      font-weight: 400;
+      color: #333;
+      text-align: right;
+      flex: 1;
+      word-break: break-word;
+
+      &.amount {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1976d2;
+      }
+
+      &.status {
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+
+        &.status-completed {
+          background-color: #e8f5e9;
+          color: #2e7d32;
+        }
+
+        &.status-pending {
+          background-color: #fff3e0;
+          color: #ef6c00;
+        }
+
+        &.status-fraud_detected {
+          background-color: #ffebee;
+          color: #c62828;
+        }
+
+        &.status-pending_review {
+          background-color: #fff3e0;
+          color: #ef6c00;
+        }
+      }
+
+      &.risk-level {
+        font-weight: 600;
+        font-size: 16px;
+      }
+
+      mat-icon {
+        vertical-align: middle;
+        margin-right: 4px;
+      }
+
+      &.fraud-reasons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+        text-align: left;
+      }
+
+      .fraud-reason-chip {
+        display: inline-block;
+        padding: 4px 12px;
+        background-color: #fff3e0;
+        border-radius: 12px;
+        font-size: 12px;
+        color: #ef6c00;
+      }
+
+      .fraud-yes {
+        color: #c62828;
+        font-weight: 600;
+      }
+
+      .fraud-no {
+        color: #2e7d32;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .explanation-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .ml-model-result {
+    padding: 16px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #2196f3;
+
+    .model-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      font-weight: 600;
+      color: #1976d2;
+
+      mat-icon {
+        color: #2196f3;
+      }
+
+      .model-name {
+        font-size: 16px;
+      }
+    }
+
+    .model-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .detail-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 0;
+        border-bottom: 1px solid #e0e0e0;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .label {
+          font-weight: 500;
+          color: #666;
+        }
+
+        .value {
+          font-weight: 400;
+          color: #333;
+
+          &.prediction-fraud {
+            color: #c62828;
+            font-weight: 600;
+          }
+
+          &.prediction-normal {
+            color: #2e7d32;
+            font-weight: 600;
+          }
+        }
+      }
+
+      .interpretation {
+        margin-top: 12px;
+        padding: 12px;
+        background-color: #fff;
+        border-radius: 4px;
+        border: 1px solid #e0e0e0;
+
+        p {
+          margin: 0;
+          font-size: 14px;
+          line-height: 1.5;
+          color: #555;
+        }
+      }
+    }
+  }
+
+  .ml-summary, .rule-summary {
+    padding: 16px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #4caf50;
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #e0e0e0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .label {
+        font-weight: 500;
+        color: #666;
+      }
+
+      .value {
+        font-weight: 400;
+        color: #333;
+
+        &.score-value {
+          font-size: 16px;
+          font-weight: 600;
+        }
+      }
+    }
+
+    .interpretation {
+      margin-top: 12px;
+      padding: 12px;
+      background-color: #fff;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+
+      p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.5;
+        color: #555;
+      }
+    }
+  }
+
+  .rule-summary {
+    border-left-color: #ff9800;
+  }
+
+  .conclusion-section {
+    mat-card-header {
+      background-color: #e3f2fd !important;
+    }
+  }
+
+  .conclusion-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .conclusion-summary {
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #e0e0e0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .label {
+        font-weight: 600;
+        color: #333;
+        font-size: 15px;
+      }
+
+      .value {
+        font-weight: 500;
+        color: #333;
+
+        &.score-value {
+          font-size: 18px;
+          font-weight: 700;
+        }
+
+        &.fraud-decision {
+          color: #c62828;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        &.legitimate-decision {
+          color: #2e7d32;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+      }
+    }
+  }
+
+  .conclusion-explanation {
+    margin-top: 16px;
+
+    .explanation-box {
+      display: flex;
+      gap: 12px;
+      padding: 16px;
+      background-color: #e3f2fd;
+      border-radius: 8px;
+      border-left: 4px solid #2196f3;
+
+      mat-icon {
+        color: #2196f3;
+        flex-shrink: 0;
+      }
+
+      p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.6;
+        color: #1565c0;
+        flex: 1;
+      }
+    }
+  }
+}
+
+mat-dialog-actions {
+  padding: 16px;
+  margin: 0;
+  border-top: 1px solid #e0e0e0;
+}
+
