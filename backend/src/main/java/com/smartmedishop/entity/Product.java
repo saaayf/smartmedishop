@@ -41,6 +41,12 @@ public class Product {
     @Column(name = "expiration_date")
     private LocalDate expirationDate;
 
+    @Column(name = "marque")
+    private String marque;
+
+    @Column(name = "type")
+    private String type;
+
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -71,6 +77,12 @@ public class Product {
 
     public LocalDate getExpirationDate() { return expirationDate; }
     public void setExpirationDate(LocalDate expirationDate) { this.expirationDate = expirationDate; }
+
+    public String getMarque() { return marque; }
+    public void setMarque(String marque) { this.marque = marque; }
+
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

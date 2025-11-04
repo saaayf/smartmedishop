@@ -44,7 +44,9 @@ export class ProductFormComponent implements OnInit {
       quantity: [0, [Validators.required, Validators.min(0)]],
       lowStockThreshold: [0, [Validators.required, Validators.min(0)]],
       price: [0, [Validators.required, Validators.min(0.01)]],
-      expirationDate: ['', Validators.required]
+      expirationDate: ['', Validators.required],
+      marque: [''],
+      type: ['']
     });
   }
 
@@ -59,7 +61,9 @@ export class ProductFormComponent implements OnInit {
           quantity: product.quantity,
           lowStockThreshold: product.lowStockThreshold,
           price: product.price,
-          expirationDate: product.expirationDate
+          expirationDate: product.expirationDate,
+          marque: product.marque || '',
+          type: product.type || ''
         });
         // Disable SKU field in edit mode
         this.productForm.get('sku')?.disable();
@@ -93,7 +97,9 @@ export class ProductFormComponent implements OnInit {
         quantity: formValue.quantity,
         lowStockThreshold: formValue.lowStockThreshold,
         price: formValue.price,
-        expirationDate: formValue.expirationDate
+        expirationDate: formValue.expirationDate,
+        marque: formValue.marque,
+        type: formValue.type
       };
       
       this.stockService.updateProduct(this.productId, updateData).subscribe({

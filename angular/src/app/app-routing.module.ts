@@ -51,6 +51,11 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: () => import('./features/stock/stock.module').then(m => m.StockModule)
   },
+  { 
+    path: 'purchases', 
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./features/purchases/purchases.module').then(m => m.PurchasesModule)
+  },
   
   // 404 Not Found page
   { 

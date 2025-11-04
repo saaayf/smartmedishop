@@ -7,5 +7,7 @@ export interface Product {
   lowStockThreshold: number;
   price: number;
   expirationDate: string;
+  marque?: string;
+  type?: string;
   createdAt?: string;
 }

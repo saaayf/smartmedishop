@@ -1,0 +1,213 @@
+.recommendations-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e0e0e0;
+
+    .header-content {
+      h1 {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0 0 8px 0;
+        font-size: 32px;
+        font-weight: 500;
+        color: #1976d2;
+
+        mat-icon {
+          color: #ffc107;
+          font-size: 36px;
+          width: 36px;
+          height: 36px;
+        }
+      }
+
+      .subtitle {
+        margin: 0;
+        color: rgba(0, 0, 0, 0.6);
+        font-size: 16px;
+      }
+    }
+
+    button {
+      margin-top: 8px;
+    }
+  }
+
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+
+    p {
+      margin-top: 16px;
+      color: rgba(0, 0, 0, 0.6);
+      font-size: 16px;
+    }
+  }
+
+  .no-recommendations {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    text-align: center;
+
+    mat-icon {
+      font-size: 80px;
+      width: 80px;
+      height: 80px;
+      color: rgba(0, 0, 0, 0.3);
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      margin: 0 0 12px 0;
+      color: rgba(0, 0, 0, 0.7);
+    }
+
+    p {
+      margin: 0 0 24px 0;
+      color: rgba(0, 0, 0, 0.6);
+      font-size: 16px;
+    }
+  }
+
+  .recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 24px;
+
+    .recommendation-card {
+      transition: transform 0.2s, box-shadow 0.2s;
+      border-left: 4px solid #1976d2;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+      }
+
+      &.low-stock {
+        border-left-color: #ff9800;
+      }
+
+      &.expired {
+        border-left-color: #f44336;
+      }
+
+      mat-card-header {
+        margin-bottom: 16px;
+
+        mat-card-title {
+          font-size: 20px;
+          font-weight: 500;
+          margin-bottom: 4px;
+        }
+
+        mat-card-subtitle {
+          color: rgba(0, 0, 0, 0.6);
+          font-size: 14px;
+        }
+      }
+
+      mat-card-content {
+        .description {
+          margin: 0 0 16px 0;
+          color: rgba(0, 0, 0, 0.7);
+          font-size: 14px;
+          line-height: 1.5;
+        }
+
+        .info-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 16px;
+          margin-bottom: 16px;
+
+          .info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            mat-icon {
+              color: #1976d2;
+              font-size: 20px;
+              width: 20px;
+              height: 20px;
+            }
+
+            div {
+              display: flex;
+              flex-direction: column;
+
+              .label {
+                font-size: 12px;
+                color: rgba(0, 0, 0, 0.6);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+              }
+
+              .value {
+                font-size: 14px;
+                font-weight: 500;
+                color: rgba(0, 0, 0, 0.87);
+
+                &.price {
+                  color: #1976d2;
+                  font-size: 16px;
+                  font-weight: 600;
+                }
+
+                &.expired-date {
+                  color: #f44336;
+                }
+              }
+            }
+          }
+        }
+
+        .status-badges {
+          display: flex;
+          gap: 8px;
+          margin-top: 12px;
+        }
+      }
+
+      mat-card-actions {
+        display: flex;
+        justify-content: space-between;
+        padding: 16px;
+        gap: 8px;
+
+        button {
+          flex: 1;
+        }
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .recommendations-container {
+    .recommendations-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .header {
+      flex-direction: column;
+      gap: 16px;
+    }
+  }
+}
+

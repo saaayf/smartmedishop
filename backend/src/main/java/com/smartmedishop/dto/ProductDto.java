@@ -13,6 +13,8 @@ public class ProductDto {
     public Integer lowStockThreshold;
     public Double price;
     public LocalDate expirationDate;
+    public String marque;
+    public String type;
 
     public ProductDto() {}
 
@@ -25,5 +27,7 @@ public class ProductDto {
         this.lowStockThreshold = p.getLowStockThreshold();
         this.price = p.getPrice();
         this.expirationDate = p.getExpirationDate();
+        this.marque = p.getMarque();
+        this.type = p.getType();
     }
 }

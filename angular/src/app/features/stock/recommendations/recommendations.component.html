@@ -1,0 +1,105 @@
+<div class="recommendations-container">
+  <div class="header">
+    <div class="header-content">
+      <h1>
+        <mat-icon>star</mat-icon>
+        Recommended for You
+      </h1>
+      <p class="subtitle">Products personalized just for you based on your purchase history</p>
+    </div>
+    <button mat-icon-button (click)="refreshRecommendations()" [disabled]="loading" matTooltip="Refresh recommendations">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading your recommendations...</p>
+  </div>
+
+  <div *ngIf="!loading && recommendedProducts.length === 0" class="no-recommendations">
+    <mat-icon>star_border</mat-icon>
+    <h2>No Recommendations Available</h2>
+    <p>Start shopping to get personalized product recommendations!</p>
+    <button mat-raised-button color="primary" routerLink="/stock/products">
+      <mat-icon>shopping_bag</mat-icon>
+      Browse Products
+    </button>
+  </div>
+
+  <div *ngIf="!loading && recommendedProducts.length > 0" class="recommendations-grid">
+    <mat-card *ngFor="let product of recommendedProducts" 
+              class="recommendation-card" 
+              [class.low-stock]="isLowStock(product)" 
+              [class.expired]="isExpired(product)">
+      <mat-card-header>
+        <mat-card-title>{{ product.name }}</mat-card-title>
+        <mat-card-subtitle>{{ product.sku }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="product-info">
+          <p *ngIf="product.description" class="description">
+            {{ product.description }}
+          </p>
+          <div class="info-grid">
+            <div *ngIf="product.marque" class="info-item">
+              <mat-icon>branding_watermark</mat-icon>
+              <div>
+                <span class="label">Brand</span>
+                <span class="value">{{ product.marque }}</span>
+              </div>
+            </div>
+            <div *ngIf="product.type" class="info-item">
+              <mat-icon>category</mat-icon>
+              <div>
+                <span class="label">Type</span>
+                <span class="value">{{ product.type }}</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <mat-icon>inventory</mat-icon>
+              <div>
+                <span class="label">Quantity</span>
+                <span class="value">{{ product.quantity }} units</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <mat-icon>attach_money</mat-icon>
+              <div>
+                <span class="label">Price</span>
+                <span class="value price">${{ product.price | number:'1.2-2' }}</span>
+              </div>
+            </div>
+            <div *ngIf="product.expirationDate" class="info-item">
+              <mat-icon>event</mat-icon>
+              <div>
+                <span class="label">Expires</span>
+                <span class="value" [class.expired-date]="isExpired(product)">
+                  {{ product.expirationDate | date:'shortDate' }}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="isLowStock(product) || isExpired(product)" class="status-badges">
+            <mat-chip *ngIf="isLowStock(product)" color="warn">Low Stock</mat-chip>
+            <mat-chip *ngIf="isExpired(product)" color="accent">Expired</mat-chip>
+          </div>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary" (click)="viewDetails(product.id)">
+          <mat-icon>info</mat-icon>
+          Details
+        </button>
+        <button mat-raised-button 
+                color="accent" 
+                (click)="addToCart(product)" 
+                [disabled]="product.quantity <= 0 || isExpired(product)">
+          <mat-icon>shopping_cart</mat-icon>
+          Add to Cart
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>
+

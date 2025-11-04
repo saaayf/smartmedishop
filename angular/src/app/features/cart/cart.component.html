@@ -1,5 +1,5 @@
 <div class="cart-container">
-  <h1>Panier d'achats</h1>
+  <h1>Shopping Cart</h1>
   
   <div class="cart-content" *ngIf="cartItems.length > 0">
     <div class="cart-items">
@@ -12,7 +12,7 @@
             <p class="price">{{ item.product.price | currency:'EUR' }}</p>
             <p class="stock-info">
               <mat-icon class="stock-icon">inventory_2</mat-icon>
-              Stock disponible: {{ item.product.quantity }}
+              Available stock: {{ item.product.quantity }}
             </p>
           </div>
           
@@ -42,15 +42,15 @@
     <div class="cart-summary">
       <mat-card>
         <mat-card-header>
-          <mat-card-title>Résumé de la commande</mat-card-title>
+          <mat-card-title>Order Summary</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <div class="summary-row">
-            <span>Sous-total:</span>
+            <span>Subtotal:</span>
             <span>{{ totalAmount | currency:'EUR' }}</span>
           </div>
           <div class="summary-row">
-            <span>TVA (19%):</span>
+            <span>VAT (19%):</span>
             <span>{{ (totalAmount * 0.19) | currency:'EUR' }}</span>
           </div>
           <mat-divider></mat-divider>
@@ -61,13 +61,13 @@
           
           <div class="cart-info">
             <mat-icon color="primary">info</mat-icon>
-            <p>Le stock sera automatiquement mis à jour après l'achat</p>
+            <p>Stock will be automatically updated after purchase</p>
           </div>
         </mat-card-content>
         <mat-card-actions>
           <button mat-button (click)="clearCart()" [disabled]="processing">
             <mat-icon>delete_sweep</mat-icon>
-            Vider le panier
+            Clear Cart
           </button>
           <button mat-raised-button 
                   color="primary" 
@@ -76,7 +76,7 @@
             <mat-spinner *ngIf="processing" diameter="20"></mat-spinner>
             <span *ngIf="!processing">
               <mat-icon>shopping_cart_checkout</mat-icon>
-              Passer la commande
+              Proceed to Checkout
             </span>
           </button>
         </mat-card-actions>
@@ -86,11 +86,11 @@
   
   <div class="empty-cart" *ngIf="cartItems.length === 0">
     <mat-icon>shopping_cart</mat-icon>
-    <h2>Votre panier est vide</h2>
-    <p>Ajoutez des produits pour commencer vos achats</p>
+    <h2>Your cart is empty</h2>
+    <p>Add products to start shopping</p>
     <button mat-raised-button color="primary" routerLink="/stock/products">
       <mat-icon>inventory_2</mat-icon>
-      Voir les produits
+      View Products
     </button>
   </div>
 </div>

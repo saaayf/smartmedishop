@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { Product } from '../../models/product.model';
 
 export interface Transaction {
   id?: number;
@@ -267,5 +268,45 @@ export class ApiService {
 
   getStock(): Observable<any[]> {
     return this.get<any[]>('/stock');
+  }
+
+  // User Purchase endpoints
+  recordPurchases(data: { transactionId: number; items: any[]; location?: string }): Observable<any> {
+    return this.post('/purchases/record', data);
+  }
+
+  getMyPurchases(): Observable<any[]> {
+    return this.get('/purchases/my-purchases');
+  }
+
+  getUserPurchases(userId: number): Observable<any[]> {
+    return this.get(`/purchases/user/${userId}`);
+  }
+
+  getTransactionPurchases(transactionId: number): Observable<any[]> {
+    return this.get(`/purchases/transaction/${transactionId}`);
+  }
+
+  // Recommendation endpoints
+  getRecommendations(params?: { state?: string; type?: string; price?: number; top_n?: number }): Observable<{ recommendations: Product[]; count: number }> {
+    let url = '/recommendations';
+    if (params) {
+      const queryParams = new URLSearchParams();
+      if (params.state) queryParams.append('state', params.state);
+      if (params.type) queryParams.append('type', params.type);
+      if (params.price !== undefined) queryParams.append('price', params.price.toString());
+      if (params.top_n !== undefined) queryParams.append('top_n', params.top_n.toString());
+      const queryString = queryParams.toString();
+      if (queryString) url += '?' + queryString;
+    }
+    return this.get<{ recommendations: Product[]; count: number }>(url);
+  }
+
+  getUserRecommendations(top_n?: number): Observable<{ username: string; recommendations: Product[]; count: number }> {
+    let url = '/recommendations/user';
+    if (top_n !== undefined) {
+      url += `?top_n=${top_n}`;
+    }
+    return this.get<{ username: string; recommendations: Product[]; count: number }>(url);
   }
 }

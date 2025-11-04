@@ -69,15 +69,15 @@
   <mat-menu #stockMenu="matMenu">
     <button mat-menu-item routerLink="/stock/products">
       <mat-icon>list</mat-icon>
-      <span>Produits</span>
+      <span>Products</span>
     </button>
     <button mat-menu-item routerLink="/stock/products/new">
       <mat-icon>add</mat-icon>
-      <span>Ajouter un produit</span>
+      <span>Add Product</span>
     </button>
     <button mat-menu-item routerLink="/stock/movements/new">
       <mat-icon>swap_horiz</mat-icon>
-      <span>Enregistrer un mouvement</span>
+      <span>Record Movement</span>
     </button>
   </mat-menu>
   
@@ -85,6 +85,12 @@
   <button mat-button routerLink="/stock/products" routerLinkActive="active" *ngIf="!isAdmin()">
     <mat-icon>inventory</mat-icon>
     Stock
+  </button>
+  
+  <!-- Recommendations link for regular users -->
+  <button mat-button routerLink="/stock/recommendations" routerLinkActive="active" *ngIf="!isAdmin()">
+    <mat-icon>star</mat-icon>
+    Recommendations
   </button>
 
   <!-- Cart button with badge -->
@@ -94,7 +100,7 @@
               matBadgeColor="warn">
       shopping_cart
     </mat-icon>
-    Panier
+    Cart
   </button>
   
   <!-- User menu -->

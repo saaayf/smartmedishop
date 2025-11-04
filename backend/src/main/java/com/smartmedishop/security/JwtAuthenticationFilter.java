@@ -27,11 +27,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         
+        String requestPath = request.getRequestURI();
+        if (requestPath != null && requestPath.contains("/recommendations")) {
+            System.out.println("DEBUG JwtAuthenticationFilter: Request to recommendations endpoint: " + requestPath);
+            System.out.println("DEBUG JwtAuthenticationFilter: Method: " + request.getMethod());
+        }
+        
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String username;
         
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            if (requestPath != null && requestPath.contains("/recommendations")) {
+                System.out.println("DEBUG JwtAuthenticationFilter: No Authorization header found for recommendations");
+            }
             filterChain.doFilter(request, response);
             return;
         }

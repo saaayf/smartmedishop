@@ -74,6 +74,8 @@ public class StockController {
         if (body.getLowStockThreshold() != null) p.setLowStockThreshold(body.getLowStockThreshold());
         if (body.getPrice() != null) p.setPrice(body.getPrice());
         if (body.getExpirationDate() != null) p.setExpirationDate(body.getExpirationDate());
+        if (body.getMarque() != null) p.setMarque(body.getMarque());
+        if (body.getType() != null) p.setType(body.getType());
         Product updated = stockService.updateProduct(p);
         return ResponseEntity.ok(new ProductDto(updated));
     }

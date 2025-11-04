@@ -6,6 +6,7 @@ import { ProductDetailComponent } from './product-detail/product-detail.componen
 import { ProductFormComponent } from './product-form/product-form.component';
 import { MovementFormComponent } from './movement-form/movement-form.component';
 import { PredictComponent } from './predict/predict.component';
+import { RecommendationsComponent } from './recommendations/recommendations.component';
 
 const routes: Routes = [
   {
@@ -16,6 +17,10 @@ const routes: Routes = [
   {
     path: 'products',
     component: ProductListComponent
+  },
+  {
+    path: 'recommendations',
+    component: RecommendationsComponent
   },
   {
     path: 'products/new',

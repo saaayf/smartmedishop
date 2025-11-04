@@ -1,0 +1,80 @@
+<div class="purchase-history-container">
+  <div class="header">
+    <h1>Mon Historique d'Achats</h1>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Chargement en cours...</p>
+  </div>
+
+  <div *ngIf="!loading && purchases.length === 0" class="no-data">
+    <mat-icon>shopping_bag</mat-icon>
+    <p>Aucun achat enregistré</p>
+  </div>
+
+  <div *ngIf="!loading && purchases.length > 0" class="table-container">
+    <table mat-table [dataSource]="purchases" class="mat-elevation-z2">
+      
+      <!-- StockId Column -->
+      <ng-container matColumnDef="stockId">
+        <th mat-header-cell *matHeaderCellDef>StockId</th>
+        <td mat-cell *matCellDef="let purchase">
+          <strong>{{ purchase.stockId }}</strong>
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let purchase">{{ purchase.name }}</td>
+      </ng-container>
+
+      <!-- Marque Column -->
+      <ng-container matColumnDef="marque">
+        <th mat-header-cell *matHeaderCellDef>Marque</th>
+        <td mat-cell *matCellDef="let purchase">{{ purchase.marque || '-' }}</td>
+      </ng-container>
+
+      <!-- Type Column -->
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <td mat-cell *matCellDef="let purchase">{{ purchase.type || '-' }}</td>
+      </ng-container>
+
+      <!-- State Column (stores location) -->
+      <ng-container matColumnDef="state">
+        <th mat-header-cell *matHeaderCellDef>State</th>
+        <td mat-cell *matCellDef="let purchase">
+          <mat-chip [class]="getStateClass(purchase.state)">
+            {{ purchase.state || '-' }}
+          </mat-chip>
+        </td>
+      </ng-container>
+
+      <!-- Price Column -->
+      <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef>Price</th>
+        <td mat-cell *matCellDef="let purchase">{{ purchase.price | currency:'EUR' }}</td>
+      </ng-container>
+
+      <!-- Quantity Column -->
+      <ng-container matColumnDef="quantity">
+        <th mat-header-cell *matHeaderCellDef>Quantity</th>
+        <td mat-cell *matCellDef="let purchase">{{ purchase.quantity || 1 }}</td>
+      </ng-container>
+
+      <!-- Purchase Date Column -->
+      <ng-container matColumnDef="purchaseDate">
+        <th mat-header-cell *matHeaderCellDef>Purchase Date</th>
+        <td mat-cell *matCellDef="let purchase">
+          {{ purchase.purchaseDate | date:'dd/MM/yyyy HH:mm' }}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+</div>
+

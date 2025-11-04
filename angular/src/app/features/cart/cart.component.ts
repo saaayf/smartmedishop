@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { CartService, CartItem } from '../../core/services/cart.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { CreateTransactionDialogComponent } from '../payments/create-transaction-dialog.component';
 
 @Component({
   selector: 'app-cart',
@@ -16,7 +18,8 @@ export class CartComponent implements OnInit {
   constructor(
     private cartService: CartService,
     private notificationService: NotificationService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit() {
@@ -62,6 +65,26 @@ export class CartComponent implements OnInit {
       return;
     }
 
+    // Calculate total with VAT (19%)
+    const totalWithVAT = this.totalAmount * 1.19;
+
+    // Open transaction dialog with cart total pre-filled
+    const dialogRef = this.dialog.open(CreateTransactionDialogComponent, {
+      width: '700px',
+      maxWidth: '90vw',
+      disableClose: true,
+      data: { amount: totalWithVAT }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result && result.success) {
+        // Transaction created successfully, now update stock and process cart
+        this.processCartAfterTransaction(result.transaction, result.locationCountry);
+      }
+    });
+  }
+
+  private processCartAfterTransaction(transaction: any, locationCountry?: string) {
     this.processing = true;
 
     // First validate the cart
@@ -75,22 +98,45 @@ export class CartComponent implements OnInit {
           return;
         }
 
-        // Process the purchase
-        this.cartService.processPurchase('CARD').subscribe({
-          next: (result) => {
-            this.notificationService.showSuccess(
-              `Achat effectué avec succès! Transaction ID: ${result.transaction.transactionId}`
-            );
-            this.cartService.clearCart();
-            this.processing = false;
-            
-            // Redirect to payments page to see the transaction
-            this.router.navigate(['/payments']);
+        // Update stock without creating another transaction
+        this.cartService.updateStockForPurchase().subscribe({
+          next: (stockUpdated) => {
+            if (stockUpdated) {
+              // Record purchases in user purchase history
+              const transactionId = transaction.transactionId || transaction.id;
+              const location = locationCountry || transaction.locationCountry || 'Unknown';
+              
+              this.cartService.recordPurchases(transactionId, location).subscribe({
+                next: () => {
+                  this.notificationService.showSuccess(
+                    `Achat effectué avec succès! Transaction ID: ${transactionId}`
+                  );
+                  this.cartService.clearCart();
+                  this.processing = false;
+                  
+                  // Redirect to payments page to see the transaction
+                  this.router.navigate(['/payments']);
+                },
+                error: (error) => {
+                  console.error('Error recording purchases:', error);
+                  // Still show success even if purchase history recording fails
+                  this.notificationService.showSuccess(
+                    `Achat effectué avec succès! Transaction ID: ${transactionId}`
+                  );
+                  this.cartService.clearCart();
+                  this.processing = false;
+                  this.router.navigate(['/payments']);
+                }
+              });
+            } else {
+              this.notificationService.showError('Erreur lors de la mise à jour du stock');
+              this.processing = false;
+            }
           },
           error: (error) => {
-            console.error('Error processing purchase:', error);
+            console.error('Error updating stock:', error);
             this.notificationService.showError(
-              'Erreur lors du traitement de l\'achat. Veuillez réessayer.'
+              'Erreur lors de la mise à jour du stock. Veuillez réessayer.'
             );
             this.processing = false;
           }

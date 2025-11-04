@@ -161,6 +161,61 @@ export class CartService {
   }
 
   /**
+   * Update stock for purchase without creating a transaction
+   * Used when transaction is already created (e.g., via dialog)
+   */
+  updateStockForPurchase(): Observable<boolean> {
+    const items = this.cartItems.value;
+    
+    if (items.length === 0) {
+      return new Observable(observer => {
+        observer.next(false);
+        observer.complete();
+      });
+    }
+
+    // Record stock movements for each item
+    const movementRequests = items.map(item => 
+      this.stockService.recordMovement({
+        productId: item.product.id!,
+        movementType: 'OUT',
+        quantity: item.quantity,
+        reason: 'SALE'
+      })
+    );
+
+    // Execute all movement requests
+    return forkJoin(movementRequests).pipe(
+      map(() => true)
+    );
+  }
+
+  /**
+   * Record purchases in user purchase history
+   */
+  recordPurchases(transactionId: number, location: string): Observable<any> {
+    const items = this.cartItems.value;
+    
+    if (items.length === 0) {
+      return new Observable(observer => {
+        observer.next([]);
+        observer.complete();
+      });
+    }
+
+    const purchaseItems = items.map(item => ({
+      productId: item.product.id!,
+      quantity: item.quantity
+    }));
+
+    return this.apiService.recordPurchases({
+      transactionId: transactionId,
+      items: purchaseItems,
+      location: location
+    });
+  }
+
+  /**
    * Validate cart items against current stock
    */
   validateCart(): Observable<{ valid: boolean; errors: string[] }> {

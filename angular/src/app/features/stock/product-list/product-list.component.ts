@@ -17,7 +17,7 @@ export class ProductListComponent implements OnInit {
   filteredProducts: Product[] = [];
   searchTerm: string = '';
   loading: boolean = false;
-  displayedColumns: string[] = ['sku', 'name', 'description', 'quantity', 'threshold', 'price', 'expirationDate', 'status', 'actions'];
+  displayedColumns: string[] = ['sku', 'name', 'marque', 'type', 'description', 'quantity', 'threshold', 'price', 'expirationDate', 'status', 'actions'];
 
   constructor(
     private stockService: StockService,
@@ -65,6 +65,10 @@ export class ProductListComponent implements OnInit {
     return this.authService.hasRole('ADMIN');
   }
 
+  isAdminOrFraudAnalyst(): boolean {
+    return this.authService.hasRole('ADMIN') || this.authService.hasRole('FRAUD_ANALYST');
+  }
+
   isLowStock(product: Product): boolean {
     return product.quantity < product.lowStockThreshold;
   }
@@ -77,11 +81,19 @@ export class ProductListComponent implements OnInit {
     return expirationDate < today;
   }
 
-  viewDetails(productId: number): void {
+  viewDetails(productId: number | undefined): void {
+    if (!productId) {
+      this.notificationService.showError('ID du produit non disponible');
+      return;
+    }
     this.router.navigate(['/stock/products', productId]);
   }
 
-  editProduct(productId: number): void {
+  editProduct(productId: number | undefined): void {
+    if (!productId) {
+      this.notificationService.showError('ID du produit non disponible');
+      return;
+    }
     this.router.navigate(['/stock/products', productId, 'edit']);
   }
 

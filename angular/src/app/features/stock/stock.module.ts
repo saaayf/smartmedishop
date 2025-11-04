@@ -25,6 +25,7 @@ import { ProductDetailComponent } from './product-detail/product-detail.componen
 import { ProductFormComponent } from './product-form/product-form.component';
 import { MovementFormComponent } from './movement-form/movement-form.component';
 import { PredictComponent } from './predict/predict.component';
+import { RecommendationsComponent } from './recommendations/recommendations.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { PredictComponent } from './predict/predict.component';
     ProductDetailComponent,
     ProductFormComponent,
     MovementFormComponent,
-    PredictComponent
+    PredictComponent,
+    RecommendationsComponent
   ],
   imports: [
     CommonModule,
